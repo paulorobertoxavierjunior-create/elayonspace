@@ -1,0 +1,37 @@
+body{
+font-family: Arial, Helvetica, sans-serif;
+margin:40px;
+background:#ffffff;
+color:#111;
+}
+
+header{
+text-align:center;
+margin-bottom:40px;
+}
+
+h1{
+font-size:32px;
+}
+
+nav ul{
+list-style:none;
+padding:0;
+}
+
+nav li{
+margin:10px 0;
+}
+
+a{
+text-decoration:none;
+color:#0a3d62;
+font-weight:bold;
+}
+
+footer{
+margin-top:60px;
+text-align:center;
+font-size:14px;
+color:#444;
+}
