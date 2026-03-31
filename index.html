@@ -4,7 +4,157 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Elayon Space</title>
-  <link rel="stylesheet" href="styles.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f4f5;
+      color: #2a2a2a;
+    }
+
+    .hero {
+      background: #ffffff;
+      text-align: center;
+      padding: 56px 24px 48px;
+      border-bottom: 1px solid #d0e4e8;
+    }
+
+    .hero-logo { width: 88px; margin-bottom: 20px; }
+
+    .hero h1 {
+      font-size: 2rem;
+      color: #3a7d8c;
+      margin-bottom: 14px;
+    }
+
+    .hero-text {
+      font-size: 0.95rem;
+      color: #5a8a94;
+      max-width: 460px;
+      margin: 0 auto 32px;
+      line-height: 1.7;
+    }
+
+    .btn-principal {
+      display: inline-block;
+      padding: 16px 40px;
+      background: linear-gradient(135deg, #3a7d8c, #5bb5a2);
+      color: #ffffff;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: bold;
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+
+    .btn-principal:hover { opacity: 0.88; }
+
+    .hint { font-size: 0.78rem; color: #aaa; margin-top: 12px; }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .destaque {
+      background: #ffffff;
+      border: 2px solid #5bb5a2;
+      border-radius: 20px;
+      padding: 32px 24px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .destaque .icone { font-size: 2.8rem; margin-bottom: 14px; }
+
+    .destaque h2 {
+      font-size: 1.3rem;
+      color: #3a7d8c;
+      margin-bottom: 10px;
+    }
+
+    .destaque p {
+      font-size: 0.9rem;
+      color: #5a8a94;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .btn-secundario {
+      display: inline-block;
+      padding: 12px 28px;
+      background: linear-gradient(135deg, #3a7d8c, #5bb5a2);
+      color: #ffffff;
+      border-radius: 10px;
+      font-size: 0.92rem;
+      font-weight: bold;
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+
+    .btn-secundario:hover { opacity: 0.88; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .card-em-breve {
+      background: #ffffff;
+      border: 1px solid #d0e4e8;
+      border-radius: 14px;
+      padding: 20px 16px;
+      text-align: center;
+      opacity: 0.6;
+    }
+
+    .card-em-breve .icone { font-size: 1.6rem; margin-bottom: 8px; }
+
+    .card-em-breve h3 {
+      font-size: 0.88rem;
+      color: #3a7d8c;
+      margin-bottom: 4px;
+    }
+
+    .tag-breve {
+      display: inline-block;
+      font-size: 0.68rem;
+      background: #fff3e0;
+      color: #e67e22;
+      border-radius: 4px;
+      padding: 2px 7px;
+      margin-top: 6px;
+    }
+
+    .bloco {
+      background: #ffffff;
+      border: 1px solid #d0e4e8;
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+
+    .bloco h2 { font-size: 0.95rem; color: #3a7d8c; margin-bottom: 10px; }
+
+    .bloco p { font-size: 0.86rem; color: #5a8a94; line-height: 1.6; }
+
+    .mini-links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+
+    .mini-links a { font-size: 0.82rem; color: #5bb5a2; text-decoration: none; }
+    .mini-links a:hover { text-decoration: underline; }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      font-size: 0.78rem;
+      color: #aaa;
+      border-top: 1px solid #d0e4e8;
+    }
+  </style>
 </head>
 <body>
 
@@ -12,162 +162,63 @@
     <img src="IMG-20260218-WA0015.jpg" alt="Logo Elayon" class="hero-logo">
     <h1>Elayon Space</h1>
     <p class="hero-text">
-      Um espaço criado para aproximar tecnologia e humanidade, transformando presença,
-      cuidado, escuta, automação e inteligência em instrumentos reais de apoio à vida.
+      Tecnologia a serviço da vida. Comece se conhecendo melhor.
     </p>
+    <a class="btn-principal" href="acesso.html">Entrar no Elayon</a>
+    <p class="hint">Cadastre-se ou faça login</p>
   </header>
 
   <main class="container">
 
-    <section class="section">
-      <h2>O que já está vivo</h2>
+    <div class="destaque">
+      <div class="icone">🎙️</div>
+      <h2>Elayon Vibes</h2>
       <p>
-        O Elayon Space organiza ferramentas reais já publicadas e funcionando.
-        Cada uma representa uma camada concreta de evolução humana assistida por tecnologia.
+        Fale. Encerre. Receba um espelho real da sua comunicação —
+        ritmo, clareza, constância e pontos de melhoria.
+        Sem julgamento. Só presença.
       </p>
-    </section>
+      <a class="btn-secundario" href="acesso.html">Começar agora</a>
+    </div>
 
-    <section class="cards-grid">
-      <article class="card">
-        <h3>Presença</h3>
-        <p>
-          Porta de entrada do ecossistema. Um espelho visual da comunicação humana, com foco
-          em ritmo, constância, clareza e percepção da própria expressão.
-        </p>
-        <a class="btn" href="https://paulorobertoxavierjunior-create.github.io/presenca/index.html">
-          Acessar ferramenta
-        </a>
-      </article>
-
-      <article class="card">
-        <h3>Elayon PsyQ</h3>
-        <p>
-          Camada de escuta simbólica assistida. Organiza cuidado, triagem e apoio humano com
-          responsabilidade profissional e fluxo ético.
-        </p>
-        <a class="btn" href="https://paulorobertoxavierjunior-create.github.io/elaionpsyq/index.html">
-          Acessar ferramenta
-        </a>
-      </article>
-
-      <article class="card">
-        <h3>Elayon Health</h3>
-        <p>
-          Frente experimental e científica do ecossistema, conectada à observação de sinais
-          humanos e à credibilidade institucional da pesquisa em saúde.
-        </p>
-        <a class="btn" href="https://paulorobertoxavierjunior-create.github.io/elayon-crs-triagem/index.html">
-          Acessar ferramenta
-        </a>
-      </article>
-
-      <article class="card">
-        <h3>Vibrações de Leão</h3>
-        <p>
-          Ferramenta educacional de oralidade, ritmo e fortalecimento da expressão, voltada
-          à confiança do estudante e ao treino humano da fala.
-        </p>
-        <a class="btn" href="https://paulorobertoxavierjunior-create.github.io/vibracoes-de-leao/index.html">
-          Acessar ferramenta
-        </a>
-      </article>
-
-      <article class="card highlight">
+    <div class="grid">
+      <div class="card-em-breve">
+        <div class="icone">🧠</div>
+        <h3>PsyQ</h3>
+        <span class="tag-breve">Em breve</span>
+      </div>
+      <div class="card-em-breve">
+        <div class="icone">🔬</div>
+        <h3>Health</h3>
+        <span class="tag-breve">Em breve</span>
+      </div>
+      <div class="card-em-breve">
+        <div class="icone">🦁</div>
+        <h3>Vibrações</h3>
+        <span class="tag-breve">Em breve</span>
+      </div>
+      <div class="card-em-breve">
+        <div class="icone">💻</div>
         <h3>Elayon PC</h3>
-        <p>
-          Camada funcional de automação assistida já em operação. Permite interação por comando
-          humano, controle remoto, rotinas, espelhamento e organização de execução computacional.
-        </p>
-        <p>
-          O Elayon PC aproxima a visão do projeto dos gêmeos digitais, da operação assistida e
-          dos ambientes da Indústria 4.0, preparando a transição para uma lógica mais humana na
-          Indústria 5.0.
-        </p>
-        <a class="btn secondary" href="automacao.html">
-          Ver automação
-        </a>
-      </article>
+        <span class="tag-breve">Em breve</span>
+      </div>
+    </div>
 
-      <article class="card highlight">
-        <h3>Elayon Mechanics</h3>
-        <p>
-          Próxima expansão natural do Elayon PC. Leva a mesma lógica de comando assistido para
-          mecanismos físicos, campo, produção, manejo, monitoramento e operação conectada.
-        </p>
-        <a class="btn secondary" href="automacao.html">
-          Ver expansão
-        </a>
-      </article>
-    </section>
-
-    <section class="section">
-      <h2>Planos de uso e evolução</h2>
-      <p>
-        O ecossistema foi pensado em camadas. Cada nova etapa amplia a anterior, em vez de
-        descartá-la. Isso cria uma progressão coerente de uso, presença e aprofundamento.
-      </p>
-    </section>
-
-    <section class="cards-grid two-col">
-      <article class="card">
-        <h3>Sequência de adesão</h3>
-        <p>
-          Presença → PsyQ → Health → Vibrações → PC → Mechanics
-        </p>
-        <p>
-          Cada plano depende do amadurecimento do anterior e amplia a capacidade de observação,
-          cuidado, aprendizagem e execução assistida.
-        </p>
-      </article>
-
-      <article class="card">
-        <h3>Ponto de lançamento</h3>
-        <p>
-          O Elayon não nasce para vender promessa vazia. Ele nasce para alinhar esforços humanos,
-          tecnológicos e institucionais em favor da evolução da espécie com mais consciência,
-          cooperação e responsabilidade.
-        </p>
-      </article>
-    </section>
-
-    <section class="cards-grid two-col">
-      <article class="card highlight">
-        <h3>Acessibilidade</h3>
-        <p>
-          O Elayon caminha para um futuro em que pessoas com diferentes necessidades sensoriais,
-          motoras e cognitivas possam interagir com tecnologia com mais autonomia e dignidade.
-        </p>
-        <a class="btn secondary" href="acessibilidade.html">Abrir página</a>
-      </article>
-
-      <article class="card highlight">
-        <h3>Planos do ecossistema</h3>
-        <p>
-          Uma visualização simples das camadas de adesão e expansão do Elayon, mostrando que cada
-          etapa prepara a seguinte.
-        </p>
-        <a class="btn secondary" href="carrinho.html">Abrir página</a>
-      </article>
-    </section>
-
-    <section class="section">
+    <div class="bloco">
       <h2>Navegação</h2>
       <div class="mini-links">
-        <a href="sobre.html">Sobre o Elayon</a>
+        <a href="sobre.html">Sobre</a>
         <a href="tecnologia.html">Tecnologia CRS</a>
-        <a href="ferramentas.html">Ferramentas</a>
-        <a href="automacao.html">Automação</a>
         <a href="pesquisa.html">Pesquisa</a>
         <a href="ecossistema.html">Ecossistema</a>
-        <a href="acesso.html">Painel de acesso</a>
-        <a href="carrinho.html">Planos de uso</a>
+        <a href="carrinho.html">Planos</a>
       </div>
-    </section>
+    </div>
 
   </main>
 
-  <footer class="footer">
-    <p>Elayon Space • presença, escuta, automação e inteligência a serviço da vida</p>
+  <footer>
+    Elayon Space • presença, escuta, automação e inteligência a serviço da vida
   </footer>
 
 </body>
