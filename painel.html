@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Elayon Space • Painel</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f4f5;
+      color: #2a2a2a;
+      min-height: 100vh;
+      padding: 24px 20px 40px;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 28px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #d0e4e8;
+    }
+
+    .header-logo { display: flex; align-items: center; gap: 10px; }
+    .header-logo img { width: 38px; }
+    .header-logo span { font-size: 1.1rem; font-weight: bold; color: #3a7d8c; }
+
+    .btn-sair {
+      background: none;
+      border: 1px solid #c0dde3;
+      color: #3a7d8c;
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-sair:hover { background: #fdecea; border-color: #e88; color: #c0392b; }
+
+    .boas-vindas { margin-bottom: 28px; }
+
+    .boas-vindas h1 { font-size: 1.2rem; color: #3a7d8c; }
+
+    .boas-vindas p { font-size: 0.85rem; color: #5a8a94; margin-top: 4px; }
+
+    .destaque {
+      background: #ffffff;
+      border: 2px solid #5bb5a2;
+      border-radius: 20px;
+      padding: 28px 24px;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .destaque .icone { font-size: 2.4rem; margin-bottom: 12px; }
+
+    .destaque h2 { font-size: 1.2rem; color: #3a7d8c; margin-bottom: 8px; }
+
+    .destaque p {
+      font-size: 0.88rem;
+      color: #5a8a94;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .btn-ferramenta {
+      display: inline-block;
+      padding: 14px 32px;
+      background: linear-gradient(135deg, #3a7d8c, #5bb5a2);
+      color: #ffffff;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: bold;
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+
+    .btn-ferramenta:hover { opacity: 0.88; }
+
+    .secao-titulo {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #5bb5a2;
+      font-weight: bold;
+      margin-bottom: 12px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .card-em-breve {
+      background: #ffffff;
+      border: 1px solid #d0e4e8;
+      border-radius: 14px;
+      padding: 18px 14px;
+      text-align: center;
+      opacity: 0.55;
+    }
+
+    .card-em-breve .icone { font-size: 1.4rem; margin-bottom: 6px; }
+
+    .card-em-breve h3 { font-size: 0.85rem; color: #3a7d8c; margin-bottom: 4px; }
+
+    .tag-breve {
+      display: inline-block;
+      font-size: 0.66rem;
+      background: #fff3e0;
+      color: #e67e22;
+      border-radius: 4px;
+      padding: 2px 6px;
+    }
+
+    .rodape {
+      text-align: center;
+      margin-top: 28px;
+      font-size: 0.75rem;
+      color: #aaa;
+    }
+
+    .rodape a { color: #5bb5a2; text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-logo">
+    <img src="IMG-20260218-WA0015.jpg" alt="Elayon">
+    <span>Elayon</span>
+  </div>
+  <button class="btn-sair" onclick="sair()">Sair</button>
+</div>
+
+<div class="boas-vindas">
+  <h1>Olá, <span id="nome-usuario">visitante</span> 👋</h1>
+  <p>Seu espaço está pronto.</p>
+</div>
+
+<div class="destaque">
+  <div class="icone">🎙️</div>
+  <h2>Elayon Vibes</h2>
+  <p>
+    Fale. Encerre. Receba um espelho real da sua comunicação —
+    ritmo, clareza e pontos de melhoria. Sem julgamento.
+  </p>
+  <a class="btn-ferramenta" href="https://paulorobertoxavierjunior-create.github.io/presenca/index.html" target="_blank">
+    Abrir ferramenta
+  </a>
+</div>
+
+<div class="secao-titulo">Em breve</div>
+
+<div class="grid">
+  <div class="card-em-breve">
+    <div class="icone">🧠</div>
+    <h3>PsyQ</h3>
+    <span class="tag-breve">Em breve</span>
+  </div>
+  <div class="card-em-breve">
+    <div class="icone">🔬</div>
+    <h3>Health</h3>
+    <span class="tag-breve">Em breve</span>
+  </div>
+  <div class="card-em-breve">
+    <div class="icone">🦁</div>
+    <h3>Vibrações</h3>
+    <span class="tag-breve">Em breve</span>
+  </div>
+  <div class="card-em-breve">
+    <div class="icone">💻</div>
+    <h3>Elayon PC</h3>
+    <span class="tag-breve">Em breve</span>
+  </div>
+  <div class="card-em-breve">
+    <div class="icone">⚙️</div>
+    <h3>Mechanics</h3>
+    <span class="tag-breve">Em breve</span>
+  </div>
+  <div class="card-em-breve">
+    <div class="icone">🏭</div>
+    <h3>Indústria</h3>
+    <span class="tag-breve">Em breve</span>
+  </div>
+</div>
+
+<div class="rodape">
+  <a href="https://elayon.space">← Voltar ao site</a>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const { createClient } = supabase;
+  const sb = createClient(
+    'https://eudcjihffrfmhzmfwtlg.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1ZGNqaWhmZnJmbWh6bWZ3dGxnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3NDE3MjUsImV4cCI6MjA5MDMxNzcyNX0.2tod6vvl_4SAXzSmW1wU8Mk9pLn8fvhF2xrAZOysUu0'
+  );
+
+  sb.auth.getSession().then(({ data }) => {
+    if (!data.session) {
+      window.location.href = 'acesso.html';
+    } else {
+      const nome = data.session.user.user_metadata?.nome_completo || 'visitante';
+      document.getElementById('nome-usuario').textContent = nome.split(' ')[0];
+    }
+  });
+
+  async function sair() {
+    await sb.auth.signOut();
+    window.location.href = 'https://elayon.space';
+  }
+</script>
+
+</body>
+</html>
