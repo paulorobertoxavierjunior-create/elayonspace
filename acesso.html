@@ -9,8 +9,8 @@
 
     body {
       font-family: 'Segoe UI', sans-serif;
-      background: #0a0a0a;
-      color: #f0f0f0;
+      background: #f0f4f5;
+      color: #2a2a2a;
       min-height: 100vh;
       display: flex;
       align-items: center;
@@ -19,12 +19,13 @@
     }
 
     .card {
-      background: #141414;
-      border: 1px solid #2a2a2a;
-      border-radius: 16px;
+      background: #ffffff;
+      border: 1px solid #d0e4e8;
+      border-radius: 20px;
       padding: 40px 32px;
       width: 100%;
       max-width: 420px;
+      box-shadow: 0 4px 24px rgba(58, 125, 140, 0.1);
     }
 
     .logo {
@@ -32,15 +33,20 @@
       margin-bottom: 32px;
     }
 
+    .logo img {
+      width: 90px;
+      margin-bottom: 12px;
+    }
+
     .logo h1 {
       font-size: 1.6rem;
-      color: #c9a84c;
-      letter-spacing: 2px;
+      color: #3a7d8c;
+      letter-spacing: 1px;
     }
 
     .logo p {
-      font-size: 0.85rem;
-      color: #888;
+      font-size: 0.82rem;
+      color: #5bb5a2;
       margin-top: 4px;
     }
 
@@ -53,56 +59,55 @@
     .tab {
       flex: 1;
       padding: 10px;
-      border: 1px solid #2a2a2a;
+      border: 1px solid #c0dde3;
       border-radius: 8px;
       background: transparent;
-      color: #888;
+      color: #3a7d8c;
       cursor: pointer;
       font-size: 0.9rem;
       transition: all 0.2s;
     }
 
     .tab.active {
-      background: #c9a84c;
-      color: #0a0a0a;
-      border-color: #c9a84c;
+      background: #3a7d8c;
+      color: #ffffff;
+      border-color: #3a7d8c;
       font-weight: bold;
     }
 
-    .form-group {
-      margin-bottom: 16px;
-    }
+    .form-group { margin-bottom: 16px; }
 
     label {
       display: block;
       font-size: 0.85rem;
-      color: #aaa;
+      color: #5a8a94;
       margin-bottom: 6px;
     }
 
     input {
       width: 100%;
       padding: 12px 14px;
-      background: #1e1e1e;
-      border: 1px solid #2a2a2a;
+      background: #f5fafb;
+      border: 1px solid #c0dde3;
       border-radius: 8px;
-      color: #f0f0f0;
+      color: #2a2a2a;
       font-size: 0.95rem;
       outline: none;
       transition: border-color 0.2s;
     }
 
     input:focus {
-      border-color: #c9a84c;
+      border-color: #3a7d8c;
+      background: #ffffff;
     }
 
     .btn-primary {
       width: 100%;
       padding: 14px;
-      background: #c9a84c;
-      color: #0a0a0a;
+      background: linear-gradient(135deg, #3a7d8c, #5bb5a2);
+      color: #ffffff;
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
       font-size: 1rem;
       font-weight: bold;
       cursor: pointer;
@@ -110,13 +115,13 @@
       transition: opacity 0.2s;
     }
 
-    .btn-primary:hover { opacity: 0.85; }
+    .btn-primary:hover { opacity: 0.88; }
     .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
 
     .link-btn {
       background: none;
       border: none;
-      color: #c9a84c;
+      color: #5bb5a2;
       font-size: 0.85rem;
       cursor: pointer;
       text-decoration: underline;
@@ -135,27 +140,37 @@
     }
 
     .mensagem.sucesso {
-      background: #1a3a1a;
-      color: #6fcf6f;
-      border: 1px solid #2a5a2a;
+      background: #e8f7f4;
+      color: #2a7a5a;
+      border: 1px solid #5bb5a2;
     }
 
     .mensagem.erro {
-      background: #3a1a1a;
-      color: #cf6f6f;
-      border: 1px solid #5a2a2a;
+      background: #fdecea;
+      color: #c0392b;
+      border: 1px solid #e88;
     }
 
     .secao { display: none; }
     .secao.ativa { display: block; }
+
+    .rodape {
+      text-align: center;
+      margin-top: 28px;
+      font-size: 0.78rem;
+      color: #aaa;
+    }
+
+    .rodape a { color: #5bb5a2; text-decoration: none; }
   </style>
 </head>
 <body>
 
 <div class="card">
   <div class="logo">
-    <h1>ELAYON</h1>
-    <p>presença, escuta e inteligência</p>
+    <img src="IMG-20260218-WA0015.jpg" alt="Logo Elayon">
+    <h1>Elayon</h1>
+    <p>Humanidade e Tecnologia em Harmonia</p>
   </div>
 
   <div class="tabs">
@@ -206,22 +221,22 @@
     <button class="link-btn" onclick="mostrarSecao('login')">← Voltar para o login</button>
     <div id="msg-recuperar" class="mensagem"></div>
   </div>
+
+  <div class="rodape">
+    <a href="https://elayon.space">← Voltar ao site</a>
+  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
   const { createClient } = supabase;
-
   const sb = createClient(
     'https://eudcjihffrfmhzmfwtlg.supabase.co',
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1ZGNqaWhmZnJmbWh6bWZ3dGxnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3NDE3MjUsImV4cCI6MjA5MDMxNzcyNX0.2tod6vvl_4SAXzSmW1wU8Mk9pLn8fvhF2xrAZOysUu0'
   );
 
-  // Se já está logado, vai direto pro painel
   sb.auth.getSession().then(({ data }) => {
-    if (data.session) {
-      window.location.href = 'painel.html';
-    }
+    if (data.session) window.location.href = 'painel.html';
   });
 
   function mostrarSecao(secao) {
@@ -243,21 +258,12 @@
     const email = document.getElementById('login-email').value.trim();
     const senha = document.getElementById('login-senha').value;
     const btn = document.getElementById('btn-login');
-
-    if (!email || !senha) {
-      mostrarMensagem('msg-login', 'Preencha email e senha.', 'erro');
-      return;
-    }
-
-    btn.disabled = true;
-    btn.textContent = 'Entrando...';
-
+    if (!email || !senha) { mostrarMensagem('msg-login', 'Preencha email e senha.', 'erro'); return; }
+    btn.disabled = true; btn.textContent = 'Entrando...';
     const { error } = await sb.auth.signInWithPassword({ email, password: senha });
-
     if (error) {
       mostrarMensagem('msg-login', 'Email ou senha incorretos.', 'erro');
-      btn.disabled = false;
-      btn.textContent = 'Entrar';
+      btn.disabled = false; btn.textContent = 'Entrar';
     } else {
       window.location.href = 'painel.html';
     }
@@ -268,58 +274,37 @@
     const email = document.getElementById('cadastro-email').value.trim();
     const senha = document.getElementById('cadastro-senha').value;
     const btn = document.getElementById('btn-cadastro');
-
-    if (!nome || !email || !senha) {
-      mostrarMensagem('msg-cadastro', 'Preencha todos os campos.', 'erro');
-      return;
-    }
-
-    if (senha.length < 6) {
-      mostrarMensagem('msg-cadastro', 'Senha deve ter no mínimo 6 caracteres.', 'erro');
-      return;
-    }
-
-    btn.disabled = true;
-    btn.textContent = 'Criando conta...';
-
+    if (!nome || !email || !senha) { mostrarMensagem('msg-cadastro', 'Preencha todos os campos.', 'erro'); return; }
+    if (senha.length < 6) { mostrarMensagem('msg-cadastro', 'Senha mínima: 6 caracteres.', 'erro'); return; }
+    btn.disabled = true; btn.textContent = 'Criando conta...';
     const { error } = await sb.auth.signUp({
-      email,
-      password: senha,
+      email, password: senha,
       options: {
         data: { nome_completo: nome },
         emailRedirectTo: 'https://paulorobertoxavierjunior-create.github.io/elayonspace/confirmacao.html'
       }
     });
-
     if (error) {
-      mostrarMensagem('msg-cadastro', 'Erro ao criar conta: ' + error.message, 'erro');
-      btn.disabled = false;
-      btn.textContent = 'Criar conta';
+      mostrarMensagem('msg-cadastro', 'Erro: ' + error.message, 'erro');
+      btn.disabled = false; btn.textContent = 'Criar conta';
     } else {
-      mostrarMensagem('msg-cadastro', '✓ Conta criada! Verifique seu email para confirmar o acesso.', 'sucesso');
-      btn.textContent = 'Email enviado';
+      mostrarMensagem('msg-cadastro', '✓ Verifique seu email para confirmar o acesso.', 'sucesso');
+      btn.textContent = 'Email enviado ✓';
     }
   }
 
   async function recuperarSenha() {
     const email = document.getElementById('recuperar-email').value.trim();
-
-    if (!email) {
-      mostrarMensagem('msg-recuperar', 'Digite seu email.', 'erro');
-      return;
-    }
-
+    if (!email) { mostrarMensagem('msg-recuperar', 'Digite seu email.', 'erro'); return; }
     const { error } = await sb.auth.resetPasswordForEmail(email, {
       redirectTo: 'https://paulorobertoxavierjunior-create.github.io/elayonspace/confirmacao.html'
     });
-
     if (error) {
       mostrarMensagem('msg-recuperar', 'Erro ao enviar email.', 'erro');
     } else {
-      mostrarMensagem('msg-recuperar', '✓ Link enviado para seu email.', 'sucesso');
+      mostrarMensagem('msg-recuperar', '✓ Link enviado! Verifique seu email.', 'sucesso');
     }
   }
 </script>
-
 </body>
 </html>
