@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verificação do Sistema — Elayon Space</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      color-scheme: light;
+      --bg: #f2f7f8;
+      --panel: #ffffff;
+      --line: #d3e4e8;
+      --text: #19363d;
+      --muted: #56757d;
+      --brand: #3a7d8c;
+      --brand-soft: #dff1f4;
+      --warn: #c66b14;
+      --warn-soft: #fff1de;
+      --danger: #9f2f3d;
+      --danger-soft: #fdecef;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(180deg, #eef5f7 0%, var(--bg) 100%);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 28px 18px 40px;
+    }
+
+    .wrap {
+      max-width: 1120px;
+      margin: 0 auto;
+    }
+
+    .topbar,
+    .hero,
+    .card,
+    .summary {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      box-shadow: 0 10px 30px rgba(25, 54, 61, 0.06);
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      padding: 18px 20px;
+      margin-bottom: 20px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand img {
+      width: 42px;
+      border-radius: 12px;
+    }
+
+    .brand-text small,
+    .eyebrow,
+    .demo,
+    .meta,
+    .lock,
+    .footer-note {
+      color: var(--muted);
+    }
+
+    .brand-text strong {
+      display: block;
+      font-size: 1rem;
+      color: var(--brand);
+    }
+
+    .topbar a,
+    .actions button {
+      border: 1px solid #9bc8cf;
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    .topbar a {
+      background: #ffffff;
+      color: var(--brand);
+    }
+
+    .topbar a:hover,
+    .actions button:hover {
+      opacity: 0.88;
+    }
+
+    .hero {
+      padding: 28px 24px;
+      margin-bottom: 20px;
+    }
+
+    .eyebrow {
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      font-size: 0.76rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 4vw, 2.8rem);
+      line-height: 1.1;
+      margin-bottom: 12px;
+    }
+
+    .hero p {
+      max-width: 760px;
+      line-height: 1.7;
+      color: var(--muted);
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.9fr);
+      gap: 20px;
+      margin-top: 24px;
+    }
+
+    .summary {
+      padding: 20px;
+      background: linear-gradient(180deg, #fbfeff 0%, #f6fbfc 100%);
+    }
+
+    .demo,
+    .status-pill,
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 7px 12px;
+    }
+
+    .demo {
+      background: var(--brand-soft);
+      color: var(--brand);
+      margin-bottom: 14px;
+    }
+
+    .status-pill {
+      background: var(--danger-soft);
+      color: var(--danger);
+      margin-bottom: 12px;
+    }
+
+    .summary strong {
+      display: block;
+      font-size: 1.15rem;
+      margin-bottom: 6px;
+    }
+
+    .meta {
+      font-size: 0.92rem;
+      line-height: 1.6;
+      margin-top: 10px;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .actions button {
+      background: linear-gradient(135deg, #3a7d8c, #5bb5a2);
+      color: #ffffff;
+      border: none;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      padding: 20px;
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: #edf7f8;
+      font-size: 1.35rem;
+    }
+
+    .card h2 {
+      font-size: 1.05rem;
+      margin-bottom: 4px;
+    }
+
+    .card p {
+      color: var(--muted);
+      font-size: 0.93rem;
+      line-height: 1.6;
+      min-height: 72px;
+    }
+
+    .chip {
+      background: var(--warn-soft);
+      color: var(--warn);
+    }
+
+    .lock {
+      display: block;
+      margin-top: 14px;
+      font-size: 0.84rem;
+      font-weight: 600;
+    }
+
+    .footer-note {
+      text-align: center;
+      font-size: 0.82rem;
+      margin-top: 20px;
+    }
+
+    @media (max-width: 980px) {
+      .hero-grid,
+      .grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .hero-grid {
+        align-items: start;
+      }
+    }
+
+    @media (max-width: 640px) {
+      body {
+        padding: 18px 14px 32px;
+      }
+
+      .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .hero-grid,
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero,
+      .card,
+      .summary {
+        border-radius: 18px;
+      }
+
+      .actions button,
+      .topbar a {
+        width: 100%;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="topbar">
+      <div class="brand">
+        <img src="IMG-20260218-WA0015.jpg" alt="Logo Elayon Space">
+        <div class="brand-text">
+          <strong>Elayon Space</strong>
+          <small>Cockpit • Verificação do Sistema</small>
+        </div>
+      </div>
+      <a href="index.html">← Voltar à página inicial</a>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="eyebrow">Cockpit</div>
+        <h1>Verificação do Sistema — Elayon Space</h1>
+        <p>
+          Painel demonstrativo para acompanhar o estado do ecossistema com dados simulados.
+          Nenhuma integração real, login, áudio ou conversação foi habilitada nesta página.
+        </p>
+
+        <div class="hero-grid">
+          <div class="summary">
+            <div class="demo">Modo de demonstração</div>
+            <div class="status-pill">Sistema bloqueado</div>
+            <strong>Acesso operacional indisponível</strong>
+            <p class="meta">
+              Todos os indicadores abaixo usam informações simuladas e servem apenas para visualização do Cockpit.
+            </p>
+            <p class="meta">
+              Última verificação simulada: <span id="horario-verificacao">--/--/---- --:--:--</span>
+            </p>
+            <div class="actions">
+              <button type="button" onclick="atualizarHorario()">Atualizar horário da verificação</button>
+            </div>
+          </div>
+
+          <div class="summary">
+            <div class="demo">Modo de demonstração</div>
+            <strong>Conversação permanece bloqueada</strong>
+            <p class="meta">
+              O módulo de Conversação está marcado como bloqueado e não realiza troca de mensagens, áudio ou chamadas externas.
+            </p>
+            <p class="meta">
+              Fluxo atual: monitoramento visual demonstrativo, sem autenticação ativa e sem APIs reais.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="grid" aria-label="Cartões de verificação do Cockpit">
+        <article class="card">
+          <div class="card-top">
+            <div>
+              <h2>Supabase</h2>
+              <span class="chip">Modo de demonstração</span>
+            </div>
+            <div class="icon">🟢</div>
+          </div>
+          <p>Latência simulada de 118 ms e sincronização visual marcada como aguardando desbloqueio operacional.</p>
+          <span class="lock">Estado: bloqueado</span>
+        </article>
+
+        <article class="card">
+          <div class="card-top">
+            <div>
+              <h2>Render</h2>
+              <span class="chip">Modo de demonstração</span>
+            </div>
+            <div class="icon">🛰️</div>
+          </div>
+          <p>Fila simulada estabilizada e serviços sinalizados como prontos para inspeção, sem publicação real.</p>
+          <span class="lock">Estado: bloqueado</span>
+        </article>
+
+        <article class="card">
+          <div class="card-top">
+            <div>
+              <h2>CRS</h2>
+              <span class="chip">Modo de demonstração</span>
+            </div>
+            <div class="icon">🧭</div>
+          </div>
+          <p>Camada simulada de análise registrada com trilha de consistência em observação controlada.</p>
+          <span class="lock">Estado: bloqueado</span>
+        </article>
+
+        <article class="card">
+          <div class="card-top">
+            <div>
+              <h2>PsyQ</h2>
+              <span class="chip">Modo de demonstração</span>
+            </div>
+            <div class="icon">🧠</div>
+          </div>
+          <p>Processamento demonstrativo com respostas congeladas até nova liberação do sistema central.</p>
+          <span class="lock">Estado: bloqueado</span>
+        </article>
+
+        <article class="card">
+          <div class="card-top">
+            <div>
+              <h2>Síntese</h2>
+              <span class="chip">Modo de demonstração</span>
+            </div>
+            <div class="icon">✨</div>
+          </div>
+          <p>Consolidação simulada de sinais concluída, porém sem geração de saídas operacionais reais.</p>
+          <span class="lock">Estado: bloqueado</span>
+        </article>
+
+        <article class="card">
+          <div class="card-top">
+            <div>
+              <h2>Validação</h2>
+              <span class="chip">Modo de demonstração</span>
+            </div>
+            <div class="icon">🛡️</div>
+          </div>
+          <p>Checklist visual demonstrativo com critérios marcados como pendentes até o desbloqueio do ambiente.</p>
+          <span class="lock">Estado: bloqueado</span>
+        </article>
+
+        <article class="card">
+          <div class="card-top">
+            <div>
+              <h2>Conversação</h2>
+              <span class="chip">Modo de demonstração</span>
+            </div>
+            <div class="icon">🔒</div>
+          </div>
+          <p>Canal intencionalmente inativo. Não há mensagens, voz, gravação, respostas automáticas ou integração externa.</p>
+          <span class="lock">Estado: bloqueado</span>
+        </article>
+
+        <article class="card">
+          <div class="card-top">
+            <div>
+              <h2>Health</h2>
+              <span class="chip">Modo de demonstração</span>
+            </div>
+            <div class="icon">📈</div>
+          </div>
+          <p>Saúde sistêmica simulada em observação com indicadores estáveis apenas para fins de apresentação.</p>
+          <span class="lock">Estado: bloqueado</span>
+        </article>
+      </section>
+    </main>
+
+    <p class="footer-note">
+      Dados simulados em Modo de demonstração • sem APIs reais, credenciais ou autenticação ativa.
+    </p>
+  </div>
+
+  <script>
+    function atualizarHorario() {
+      const agora = new Date();
+      document.getElementById('horario-verificacao').textContent = agora.toLocaleString('pt-BR');
+    }
+
+    atualizarHorario();
+  </script>
+</body>
+</html>
