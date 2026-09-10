@@ -212,24 +212,24 @@ Não requer autenticação. Dados simulados até integração real.
     <section class="panel summary">
       <div>
         <h2>Estado Geral</h2>
-        <div class="stats" id="stats"></div>
-        <p id="last-check" style="font-size:0.84rem;color:#4d7f88;"></p>
+        <div class="stats" id="stats" aria-live="polite"></div>
+        <p id="last-check" style="font-size:0.84rem;color:#4d7f88;" aria-live="polite"></p>
       </div>
       <button class="refresh" id="refresh">Atualizar verificação</button>
     </section>
 
     <section class="panel">
       <h2>Logs</h2>
-      <div class="logs" id="logs"></div>
+      <div class="logs" id="logs" aria-live="polite"></div>
     </section>
   </div>
 
   <script>
     const integracoes = [
-      { nome: "Supabase Auth", status: "online", endpoint: "supabase://projeto-configurado", ultima_verificacao: "2026-09-10 01:35", doc: "https://supabase.com/docs" },
-      { nome: "Render Backend", status: "online", endpoint: "https://backend-elayon.exemplo", ultima_verificacao: "2026-09-10 01:34", doc: "https://render.com/docs" },
-      { nome: "Núcleo CRS", status: "online", endpoint: "/health (simulado)", ultima_verificacao: "2026-09-10 01:33", doc: "tecnologia.html" },
-      { nome: "Presença Lab", status: "offline", endpoint: "presenca-lab.local (simulado)", ultima_verificacao: "2026-09-10 01:20", doc: "pesquisa.html" },
+      { nome: "Supabase Auth", status: "online", endpoint: "endpoint oculto (modo público)", ultima_verificacao: "2026-09-10 01:35", doc: "https://supabase.com/docs" },
+      { nome: "Render Backend", status: "online", endpoint: "endpoint oculto (modo público)", ultima_verificacao: "2026-09-10 01:34", doc: "https://render.com/docs" },
+      { nome: "Núcleo CRS", status: "online", endpoint: "endpoint oculto (modo público)", ultima_verificacao: "2026-09-10 01:33", doc: "tecnologia.html" },
+      { nome: "Presença Lab", status: "offline", endpoint: "endpoint oculto (modo público)", ultima_verificacao: "2026-09-10 01:20", doc: "pesquisa.html" },
       { nome: "PsyQ", status: "awaiting", endpoint: "não configurado", ultima_verificacao: "—", doc: "ecossistema.html" },
       { nome: "Síntese", status: "awaiting", endpoint: "não configurado", ultima_verificacao: "—", doc: "ecossistema.html" },
       { nome: "Validação", status: "awaiting", endpoint: "não configurado", ultima_verificacao: "—", doc: "ecossistema.html" },
@@ -250,6 +250,7 @@ Não requer autenticação. Dados simulados até integração real.
     const lastCheckEl = document.getElementById('last-check');
     const logsEl = document.getElementById('logs');
     const refreshBtn = document.getElementById('refresh');
+    const LOG_LIMIT = 20;
 
     function normalizedStatus(item) {
       return item.status === 'awaiting' && item.endpoint === 'não configurado' ? 'unconfigured' : item.status;
@@ -331,6 +332,9 @@ Não requer autenticação. Dados simulados até integração real.
       logRow.className = 'log-row';
       logRow.textContent = `${checkedAt} • Verificação concluída (${online} online, ${offline} offline/erro, ${awaiting} aguardando).`;
       logsEl.prepend(logRow);
+      while (logsEl.children.length > LOG_LIMIT) {
+        logsEl.removeChild(logsEl.lastElementChild);
+      }
     }
 
     refreshBtn.addEventListener('click', () => {
