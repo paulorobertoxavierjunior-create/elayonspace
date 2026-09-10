@@ -63,7 +63,7 @@
   </style>
 </head>
 <body>
-  <div class="container">
+  <div id="diagnostico" class="container" hidden aria-hidden="true">
     <section class="card">
       <h1>Index Check • Elayon Space</h1>
       <p>Painel de diagnóstico para verificar autenticação, sessão e links críticos do deploy.</p>
@@ -79,14 +79,16 @@
       <p><strong>Checks:</strong></p>
       <ul>
         <li>Usuário autenticado no Supabase</li>
-        <li>Permissão owner_check para acesso administrativo</li>
-        <li>Links principais publicados no root do Pages</li>
+        <li>Links públicos principais publicados no root do Pages</li>
       </ul>
     </section>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
+    const APP_ROOT = window.location.hostname.endsWith('github.io')
+      ? 'https://paulorobertoxavierjunior-create.github.io/elayonspace/'
+      : `${window.location.origin}/`;
     const { createClient } = supabase;
     const sb = createClient(
       'https://eudcjihffrfmhzmfwtlg.supabase.co',
@@ -99,23 +101,69 @@
       ok.style.display = 'none';
       erro.style.display = 'none';
 
-      const { data } = await sb.auth.getSession();
+      const { data, error } = await sb.auth.getSession();
+      if (error) {
+        erro.textContent = `Erro ao validar sessão: ${error.message}`;
+        erro.style.display = 'block';
+        return;
+      }
       const session = data.session;
 
       if (!session) {
-        erro.textContent = 'Sessão não encontrada. Faça login em acesso.html primeiro.';
+        window.location.href = `${APP_ROOT}acesso.html`;
+        return;
+      }
+      const diagnostico = document.getElementById('diagnostico');
+      diagnostico.hidden = false;
+      diagnostico.setAttribute('aria-hidden', 'false');
+
+      try {
+        const links = ['index.html', 'acesso.html', 'confirmacao.html', 'index-check.html'];
+        const checks = await Promise.all(links.map(async (path) => {
+          const expectedUrl = `${APP_ROOT}${path}`;
+          let response;
+          try {
+            response = await fetch(expectedUrl, { method: 'HEAD', cache: 'no-store' });
+            if (!response.ok) {
+              response = await fetch(expectedUrl, {
+                method: 'GET',
+                cache: 'no-store',
+                headers: { Range: 'bytes=0-1023' }
+              });
+            }
+          } catch (headError) {
+            try {
+              response = await fetch(expectedUrl, {
+                method: 'GET',
+                cache: 'no-store',
+                headers: { Range: 'bytes=0-1023' }
+              });
+            } catch (getError) {
+              return { path, ok: false, reason: `Erro em ${expectedUrl}: ${getError.message}` };
+            }
+          }
+          const expectedOrigin = new URL(expectedUrl).origin;
+          const expectedPath = new URL(expectedUrl).pathname;
+          const resolvedOrigin = new URL(response.url, window.location.href).origin;
+          const resolvedPath = new URL(response.url, window.location.href).pathname;
+          const normalizedMatch = path === 'index.html'
+            ? resolvedPath === expectedPath || resolvedPath === new URL(APP_ROOT).pathname
+            : resolvedPath === expectedPath;
+          return { path, ok: response.ok && resolvedOrigin === expectedOrigin && normalizedMatch, reason: `Falha em ${expectedUrl}` };
+        }));
+        const falhas = checks.filter((item) => !item.ok);
+        if (falhas.length > 0) {
+          erro.textContent = `Falha em links críticos: ${falhas.map((item) => item.reason).join(' | ')}`;
+          erro.style.display = 'block';
+          return;
+        }
+      } catch (fetchError) {
+        erro.textContent = `Erro ao checar links: ${fetchError.message}`;
         erro.style.display = 'block';
         return;
       }
 
-      const owner = session.user.user_metadata?.owner_check === true;
-      if (!owner) {
-        erro.textContent = 'Acesso restrito: owner_check não está habilitado para este usuário.';
-        erro.style.display = 'block';
-        return;
-      }
-
-      ok.textContent = '✓ Check concluído: sessão ativa, owner_check válido e páginas prontas para teste.';
+      ok.textContent = '✓ Check concluído: sessão ativa e links principais publicados.';
       ok.style.display = 'block';
     }
 

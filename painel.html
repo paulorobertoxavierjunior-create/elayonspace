@@ -131,7 +131,6 @@
       border-radius: 12px;
       padding: 14px;
       margin-top: 18px;
-      display: none;
     }
 
     .check-sistema a {
@@ -206,16 +205,15 @@
   </div>
 </div>
 
-<div id="check-sistema" class="check-sistema">
-  <a href="index-check.html">Checar sistema (owner)</a>
-</div>
-
 <div class="rodape">
   <a href="https://elayon.space">← Voltar ao site</a>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+  const SIGNOUT_REDIRECT = window.location.hostname.endsWith('github.io')
+    ? 'https://paulorobertoxavierjunior-create.github.io/elayonspace/'
+    : 'https://elayon.space';
   const { createClient } = supabase;
   const sb = createClient(
     'https://eudcjihffrfmhzmfwtlg.supabase.co',
@@ -228,16 +226,19 @@
     } else {
       const nome = data.session.user.user_metadata?.nome_completo || 'visitante';
       document.getElementById('nome-usuario').textContent = nome.split(' ')[0];
-      const ownerCheck = data.session.user.user_metadata?.owner_check === true;
-      if (ownerCheck) {
-        document.getElementById('check-sistema').style.display = 'block';
+      if (!document.querySelector('.check-sistema')) {
+        const checkSistema = document.createElement('nav');
+        checkSistema.className = 'check-sistema';
+        checkSistema.setAttribute('aria-label', 'Atalhos de diagnóstico');
+        checkSistema.innerHTML = '<a href=\"index-check.html\">Checar sistema</a>';
+        document.querySelector('.grid').insertAdjacentElement('afterend', checkSistema);
       }
     }
   });
 
   async function sair() {
     await sb.auth.signOut();
-    window.location.href = 'index.html';
+    window.location.href = SIGNOUT_REDIRECT;
   }
 </script>
 

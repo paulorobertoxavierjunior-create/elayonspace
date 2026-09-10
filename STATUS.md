@@ -17,7 +17,7 @@
 2. Cadastro com token ✅
 3. Confirmação de email ✅
 4. Login → Painel ✅
-5. Check sistema (owner only) ✅
+5. Check sistema ✅
 6. Logout ✅
 
 ## Backend Conectado
