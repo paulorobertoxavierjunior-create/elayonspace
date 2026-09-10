@@ -306,9 +306,14 @@ Página temporária de demonstração para evolução de integrações.
       const ddDoc = document.createElement('dd');
       const docLink = document.createElement('a');
       docLink.href = item.linkDoc;
-      docLink.target = '_blank';
-      docLink.rel = 'noopener noreferrer';
-      docLink.textContent = `Abrir doc de ${item.nome} (nova aba)`;
+      const isExternal = /^https?:\/\//i.test(item.linkDoc);
+      if (isExternal) {
+        docLink.target = '_blank';
+        docLink.rel = 'noopener noreferrer';
+      }
+      docLink.textContent = isExternal
+        ? `Abrir doc de ${item.nome} (nova aba)`
+        : `Abrir doc de ${item.nome}`;
       ddDoc.appendChild(docLink);
       infoList.append(dtDoc, ddDoc);
 
