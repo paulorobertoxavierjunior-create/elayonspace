@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Elayon Space — Index Check</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f2f7f8;
+      color: #21444d;
+      min-height: 100vh;
+    }
+
+    .wrapper {
+      width: min(1120px, calc(100% - 32px));
+      margin: 20px auto 28px;
+    }
+
+    .breadcrumb {
+      display: flex;
+      gap: 10px;
+      font-size: 0.85rem;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .breadcrumb a { color: #3a7d8c; text-decoration: none; font-weight: 600; }
+    .breadcrumb a:hover { text-decoration: underline; }
+
+    .header {
+      background: #fff;
+      border: 1px solid #d4e7ea;
+      border-radius: 18px;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand img { width: 54px; }
+    .brand h1 { font-size: clamp(1.15rem, 2vw, 1.4rem); color: #3a7d8c; }
+
+    .public-note {
+      font-size: 0.82rem;
+      color: #4d7f88;
+      background: #ecf7f4;
+      border: 1px solid #d3ece4;
+      border-radius: 999px;
+      padding: 8px 12px;
+      white-space: nowrap;
+    }
+
+    .panel {
+      background: #fff;
+      border: 1px solid #d4e7ea;
+      border-radius: 18px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    .panel h2 { color: #3a7d8c; font-size: 1rem; margin-bottom: 14px; }
+
+    .integrations {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .item {
+      border: 1px solid #d4e7ea;
+      border-radius: 14px;
+      padding: 12px;
+      background: #fbfeff;
+    }
+
+    .item-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 8px;
+      align-items: center;
+    }
+
+    .item-name { font-weight: 700; color: #2c6370; }
+
+    .status {
+      font-size: 0.78rem;
+      font-weight: 700;
+      border-radius: 999px;
+      padding: 4px 9px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-online { color: #217352; background: #e7f8f0; }
+    .status-offline { color: #a53030; background: #feecec; }
+    .status-awaiting { color: #8a6a12; background: #fff7e3; }
+    .status-error { color: #a45a17; background: #fff1e5; }
+    .status-maintenance { color: #8a6a12; background: #fff7e3; }
+    .status-unconfigured { color: #5f6670; background: #f0f2f5; }
+
+    .item dl {
+      display: grid;
+      grid-template-columns: 70px 1fr;
+      row-gap: 5px;
+      font-size: 0.82rem;
+      color: #4d7f88;
+    }
+
+    .item dt { font-weight: 600; }
+
+    .item a { color: #3a7d8c; text-decoration: none; }
+    .item a:hover { text-decoration: underline; }
+
+    .summary {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .stats {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      font-size: 0.9rem;
+      color: #4d7f88;
+      margin-bottom: 8px;
+    }
+
+    .refresh {
+      border: none;
+      border-radius: 10px;
+      padding: 12px 16px;
+      background: linear-gradient(135deg, #3a7d8c, #5bb5a2);
+      color: #fff;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .logs {
+      font-size: 0.84rem;
+      color: #4d7f88;
+      display: grid;
+      gap: 8px;
+      max-height: 220px;
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    .log-row {
+      border: 1px dashed #c8dde2;
+      border-radius: 10px;
+      padding: 8px 10px;
+      background: #fbfeff;
+    }
+
+    @media (max-width: 980px) {
+      .integrations { grid-template-columns: 1fr; }
+      .summary { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 640px) {
+      .wrapper { width: calc(100% - 20px); margin: 14px auto 22px; }
+      .header { flex-direction: column; align-items: flex-start; }
+      .public-note { white-space: normal; }
+      .item dl { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <!-- 
+  ELAYON SPACE — INDEX CHECK
+  Painel de verificação de saúde do sistema para administradores.
+  Mostra estado de todas as integrações e serviços críticos.
+  Não requer autenticação. Dados simulados até integração real.
+  -->
+
+  <div class="wrapper">
+    <nav class="breadcrumb" aria-label="Navegação">
+      <a href="index.html">Entrada</a>
+      <span>•</span>
+      <a href="acesso.html">Acesso</a>
+      <span>•</span>
+      <strong>Index Check</strong>
+    </nav>
+
+    <header class="header">
+      <div class="brand">
+        <img src="IMG-20260218-WA0015.jpg" alt="Logo Elayon">
+        <h1>Elayon Space — Index Check</h1>
+      </div>
+      <p class="public-note">Apenas visualização pública de status (temporário)</p>
+    </header>
+
+    <section class="panel">
+      <h2>Integrações Configuradas</h2>
+      <div class="integrations" id="integrations"></div>
+    </section>
+
+    <section class="panel summary">
+      <div>
+        <h2>Estado Geral</h2>
+        <div class="stats" id="stats"></div>
+        <p id="last-check" style="font-size:0.84rem;color:#4d7f88;"></p>
+      </div>
+      <button class="refresh" id="refresh">Atualizar verificação</button>
+    </section>
+
+    <section class="panel">
+      <h2>Logs</h2>
+      <div class="logs" id="logs"></div>
+    </section>
+  </div>
+
+  <script>
+    const integracoes = [
+      { nome: "Supabase Auth", status: "online", endpoint: "eudcjihffrfmhzmfwtlg.supabase.co", ultima_verificacao: "2026-09-10 01:35", doc: "https://supabase.com/docs" },
+      { nome: "Render Backend", status: "online", endpoint: "https://elayon-crs.onrender.com", ultima_verificacao: "2026-09-10 01:34", doc: "https://render.com/docs" },
+      { nome: "Núcleo CRS", status: "online", endpoint: "/health", ultima_verificacao: "2026-09-10 01:33", doc: "tecnologia.html" },
+      { nome: "Presença Lab", status: "offline", endpoint: "localhost:3000", ultima_verificacao: "2026-09-10 01:20", doc: "pesquisa.html" },
+      { nome: "PsyQ", status: "awaiting", endpoint: "não configurado", ultima_verificacao: "—", doc: "ecossistema.html" },
+      { nome: "Síntese", status: "awaiting", endpoint: "não configurado", ultima_verificacao: "—", doc: "ecossistema.html" },
+      { nome: "Validação", status: "awaiting", endpoint: "não configurado", ultima_verificacao: "—", doc: "ecossistema.html" },
+      { nome: "Conversação IA", status: "awaiting", endpoint: "não configurado", ultima_verificacao: "—", doc: "ecossistema.html" }
+    ];
+
+    const labels = {
+      online: { text: "✅ Online", cls: "status-online" },
+      offline: { text: "❌ Offline", cls: "status-offline" },
+      awaiting: { text: "⏳ Aguardando", cls: "status-awaiting" },
+      error: { text: "⚠️ Erro", cls: "status-error" },
+      maintenance: { text: "⏳ Manutenção", cls: "status-maintenance" },
+      unconfigured: { text: "◻️ Não configurado", cls: "status-unconfigured" }
+    };
+
+    const integrationsEl = document.getElementById('integrations');
+    const statsEl = document.getElementById('stats');
+    const lastCheckEl = document.getElementById('last-check');
+    const logsEl = document.getElementById('logs');
+    const refreshBtn = document.getElementById('refresh');
+
+    function nowString() {
+      const d = new Date();
+      const pad = (v) => String(v).padStart(2, '0');
+      return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    }
+
+    function cardTemplate(item) {
+      const normalizedStatus = item.status === 'awaiting' && item.endpoint === 'não configurado' ? 'unconfigured' : item.status;
+      const status = labels[normalizedStatus] || labels.error;
+      return `
+        <article class="item">
+          <div class="item-head">
+            <strong class="item-name">${item.nome}</strong>
+            <span class="status ${status.cls}">${status.text}</span>
+          </div>
+          <dl>
+            <dt>Endpoint</dt><dd>${item.endpoint}</dd>
+            <dt>Última</dt><dd>${item.ultima_verificacao}</dd>
+            <dt>Doc</dt><dd><a href="${item.doc}" target="_blank" rel="noreferrer">Abrir</a></dd>
+          </dl>
+        </article>
+      `;
+    }
+
+    function render() {
+      integrationsEl.innerHTML = integracoes.map(cardTemplate).join('');
+
+      const online = integracoes.filter((item) => item.status === 'online').length;
+      const offline = integracoes.filter((item) => item.status === 'offline' || item.status === 'error').length;
+      const awaiting = integracoes.filter((item) => item.status === 'awaiting' || item.status === 'maintenance').length;
+
+      statsEl.innerHTML = `
+        <strong>Online: ${online}</strong>
+        <strong>Offline/Erro: ${offline}</strong>
+        <strong>Aguardando: ${awaiting}</strong>
+      `;
+
+      const checkedAt = nowString();
+      lastCheckEl.textContent = `Última verificação geral: ${checkedAt}`;
+      logsEl.insertAdjacentHTML('afterbegin', `<div class="log-row">${checkedAt} • Verificação concluída (${online} online, ${offline} offline/erro, ${awaiting} aguardando).</div>`);
+    }
+
+    refreshBtn.addEventListener('click', () => {
+      const timestamp = nowString();
+      integracoes.forEach((item) => {
+        if (item.status !== 'awaiting') {
+          item.ultima_verificacao = timestamp;
+        }
+      });
+      render();
+    });
+
+    render();
+  </script>
+</body>
+</html>
