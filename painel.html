@@ -125,6 +125,22 @@
       color: #aaa;
     }
 
+    .check-sistema {
+      background: #ffffff;
+      border: 1px solid #d0e4e8;
+      border-radius: 12px;
+      padding: 14px;
+      margin-top: 18px;
+      display: none;
+    }
+
+    .check-sistema a {
+      color: #3a7d8c;
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: bold;
+    }
+
     .rodape a { color: #5bb5a2; text-decoration: none; }
   </style>
 </head>
@@ -190,6 +206,10 @@
   </div>
 </div>
 
+<div id="check-sistema" class="check-sistema">
+  <a href="index-check.html">Checar sistema (owner)</a>
+</div>
+
 <div class="rodape">
   <a href="https://elayon.space">← Voltar ao site</a>
 </div>
@@ -208,12 +228,16 @@
     } else {
       const nome = data.session.user.user_metadata?.nome_completo || 'visitante';
       document.getElementById('nome-usuario').textContent = nome.split(' ')[0];
+      const ownerCheck = data.session.user.user_metadata?.owner_check === true;
+      if (ownerCheck) {
+        document.getElementById('check-sistema').style.display = 'block';
+      }
     }
   });
 
   async function sair() {
     await sb.auth.signOut();
-    window.location.href = 'https://elayon.space';
+    window.location.href = 'index.html';
   }
 </script>
 
