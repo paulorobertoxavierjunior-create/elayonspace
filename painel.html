@@ -125,6 +125,21 @@
       color: #aaa;
     }
 
+    .check-sistema {
+      background: #ffffff;
+      border: 1px solid #d0e4e8;
+      border-radius: 12px;
+      padding: 14px;
+      margin-top: 18px;
+    }
+
+    .check-sistema a {
+      color: #3a7d8c;
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: bold;
+    }
+
     .rodape a { color: #5bb5a2; text-decoration: none; }
   </style>
 </head>
@@ -196,6 +211,9 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+  const SIGNOUT_REDIRECT = window.location.hostname.endsWith('github.io')
+    ? 'https://paulorobertoxavierjunior-create.github.io/elayonspace/'
+    : 'https://elayon.space';
   const { createClient } = supabase;
   const sb = createClient(
     'https://eudcjihffrfmhzmfwtlg.supabase.co',
@@ -208,12 +226,19 @@
     } else {
       const nome = data.session.user.user_metadata?.nome_completo || 'visitante';
       document.getElementById('nome-usuario').textContent = nome.split(' ')[0];
+      if (!document.querySelector('.check-sistema')) {
+        const checkSistema = document.createElement('nav');
+        checkSistema.className = 'check-sistema';
+        checkSistema.setAttribute('aria-label', 'Atalhos de diagnóstico');
+        checkSistema.innerHTML = '<a href=\"index-check.html\">Checar sistema</a>';
+        document.querySelector('.grid').insertAdjacentElement('afterend', checkSistema);
+      }
     }
   });
 
   async function sair() {
     await sb.auth.signOut();
-    window.location.href = 'https://elayon.space';
+    window.location.href = SIGNOUT_REDIRECT;
   }
 </script>
 

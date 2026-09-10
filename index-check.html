@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Elayon Space • Index Check</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f4f5;
+      color: #2a2a2a;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .container { max-width: 780px; margin: 0 auto; }
+    .card {
+      background: #fff;
+      border: 1px solid #d0e4e8;
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+    h1 { color: #3a7d8c; margin-bottom: 8px; font-size: 1.5rem; }
+    p { color: #5a8a94; line-height: 1.5; font-size: 0.92rem; }
+    .status {
+      margin-top: 10px;
+      font-size: 0.9rem;
+      color: #2a7a5a;
+      background: #e8f7f4;
+      border: 1px solid #5bb5a2;
+      border-radius: 8px;
+      padding: 9px;
+      display: none;
+    }
+    ul { margin-left: 18px; color: #3a7d8c; }
+    li { margin: 6px 0; }
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+    a, button {
+      border: 1px solid #c0dde3;
+      background: #fff;
+      color: #3a7d8c;
+      padding: 10px 14px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    button.primary, a.primary {
+      background: linear-gradient(135deg, #3a7d8c, #5bb5a2);
+      color: #fff;
+      border: none;
+    }
+    .danger {
+      background: #fdecea;
+      border: 1px solid #e88;
+      color: #c0392b;
+      border-radius: 8px;
+      padding: 10px;
+      margin-top: 12px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="diagnostico" class="container" hidden aria-hidden="true">
+    <section class="card">
+      <h1>Index Check • Elayon Space</h1>
+      <p>Painel de diagnóstico para verificar autenticação, sessão e links críticos do deploy.</p>
+      <div id="ok" class="status"></div>
+      <div id="erro" class="danger"></div>
+      <div class="actions">
+        <a class="primary" href="painel.html">Voltar ao painel</a>
+        <button type="button" onclick="rodarCheck()">Atualizar check</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <p><strong>Checks:</strong></p>
+      <ul>
+        <li>Usuário autenticado no Supabase</li>
+        <li>Links públicos principais publicados no root do Pages</li>
+      </ul>
+    </section>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const APP_ROOT = window.location.hostname.endsWith('github.io')
+      ? 'https://paulorobertoxavierjunior-create.github.io/elayonspace/'
+      : `${window.location.origin}/`;
+    const { createClient } = supabase;
+    const sb = createClient(
+      'https://eudcjihffrfmhzmfwtlg.supabase.co',
+      '******'
+    );
+
+    async function rodarCheck() {
+      const ok = document.getElementById('ok');
+      const erro = document.getElementById('erro');
+      ok.style.display = 'none';
+      erro.style.display = 'none';
+
+      const { data, error } = await sb.auth.getSession();
+      if (error) {
+        erro.textContent = `Erro ao validar sessão: ${error.message}`;
+        erro.style.display = 'block';
+        return;
+      }
+      const session = data.session;
+
+      if (!session) {
+        window.location.href = `${APP_ROOT}acesso.html`;
+        return;
+      }
+      const diagnostico = document.getElementById('diagnostico');
+      diagnostico.hidden = false;
+      diagnostico.setAttribute('aria-hidden', 'false');
+
+      try {
+        const links = ['index.html', 'acesso.html', 'confirmacao.html', 'index-check.html'];
+        const checks = await Promise.all(links.map(async (path) => {
+          const expectedUrl = `${APP_ROOT}${path}`;
+          let response;
+          try {
+            response = await fetch(expectedUrl, { method: 'HEAD', cache: 'no-store' });
+            if (!response.ok) {
+              response = await fetch(expectedUrl, {
+                method: 'GET',
+                cache: 'no-store',
+                headers: { Range: 'bytes=0-1023' }
+              });
+            }
+          } catch (headError) {
+            try {
+              response = await fetch(expectedUrl, {
+                method: 'GET',
+                cache: 'no-store',
+                headers: { Range: 'bytes=0-1023' }
+              });
+            } catch (getError) {
+              return { path, ok: false, reason: `Erro em ${expectedUrl}: ${getError.message}` };
+            }
+          }
+          const expectedOrigin = new URL(expectedUrl).origin;
+          const expectedPath = new URL(expectedUrl).pathname;
+          const resolvedOrigin = new URL(response.url, window.location.href).origin;
+          const resolvedPath = new URL(response.url, window.location.href).pathname;
+          const normalizedMatch = path === 'index.html'
+            ? resolvedPath === expectedPath || resolvedPath === new URL(APP_ROOT).pathname
+            : resolvedPath === expectedPath;
+          return { path, ok: response.ok && resolvedOrigin === expectedOrigin && normalizedMatch, reason: `Falha em ${expectedUrl}` };
+        }));
+        const falhas = checks.filter((item) => !item.ok);
+        if (falhas.length > 0) {
+          erro.textContent = `Falha em links críticos: ${falhas.map((item) => item.reason).join(' | ')}`;
+          erro.style.display = 'block';
+          return;
+        }
+      } catch (fetchError) {
+        erro.textContent = `Erro ao checar links: ${fetchError.message}`;
+        erro.style.display = 'block';
+        return;
+      }
+
+      ok.textContent = '✓ Check concluído: sessão ativa e links principais publicados.';
+      ok.style.display = 'block';
+    }
+
+    rodarCheck();
+  </script>
+</body>
+</html>

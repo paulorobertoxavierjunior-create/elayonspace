@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Elayon Space • Confirmação</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f4f5;
+      color: #2a2a2a;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .card {
+      width: 100%;
+      max-width: 460px;
+      background: #ffffff;
+      border: 1px solid #d0e4e8;
+      border-radius: 16px;
+      padding: 28px 24px;
+      text-align: center;
+      box-shadow: 0 6px 20px rgba(58, 125, 140, 0.08);
+    }
+    h1 { color: #3a7d8c; font-size: 1.4rem; margin-bottom: 10px; }
+    p { color: #5a8a94; font-size: 0.92rem; line-height: 1.6; }
+    .status {
+      margin-top: 16px;
+      font-size: 0.88rem;
+      background: #e8f7f4;
+      color: #2a7a5a;
+      border: 1px solid #5bb5a2;
+      border-radius: 8px;
+      padding: 10px;
+      display: none;
+    }
+    .actions { margin-top: 20px; display: grid; gap: 10px; }
+    a {
+      display: inline-block;
+      padding: 12px 16px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 0.92rem;
+    }
+    .btn-primary { background: linear-gradient(135deg, #3a7d8c, #5bb5a2); color: #fff; }
+    .btn-secondary { border: 1px solid #c0dde3; color: #3a7d8c; }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <h1>Confirmação de email</h1>
+    <p>
+      Seu acesso está quase pronto. Após confirmar no email, entre no painel para continuar.
+    </p>
+    <div id="status" class="status"></div>
+    <div class="actions">
+      <a class="btn-primary" href="acesso.html">Ir para login</a>
+      <a class="btn-secondary" href="index.html">Voltar ao início</a>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const { createClient } = supabase;
+    const sb = createClient(
+      'https://eudcjihffrfmhzmfwtlg.supabase.co',
+      '******'
+    );
+
+    async function sincronizarSessaoPorCallback() {
+      const hash = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+      const query = new URLSearchParams(window.location.search);
+      const access_token = hash.get('access_token') || query.get('access_token');
+      const refresh_token = hash.get('refresh_token') || query.get('refresh_token');
+      const code = query.get('code');
+      const tokenHash = query.get('token_hash');
+      const callbackType = query.get('type') || 'signup';
+
+      if (access_token && refresh_token) {
+        const { error } = await sb.auth.setSession({ access_token, refresh_token });
+        if (error) return error.message;
+        window.history.replaceState({}, document.title, window.location.pathname);
+        return null;
+      }
+      if (code) {
+        const { error } = await sb.auth.exchangeCodeForSession(code);
+        if (error) return error.message;
+        window.history.replaceState({}, document.title, window.location.pathname);
+        return null;
+      }
+      if (tokenHash) {
+        const { error } = await sb.auth.verifyOtp({ token_hash: tokenHash, type: callbackType });
+        if (error) return error.message;
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+      return null;
+    }
+
+    async function atualizarStatus() {
+      const callbackError = await sincronizarSessaoPorCallback();
+      if (callbackError) {
+        const status = document.getElementById('status');
+        status.textContent = `Erro ao confirmar acesso: ${callbackError}`;
+        status.style.display = 'block';
+        return;
+      }
+      const { data } = await sb.auth.getSession();
+      if (data.session) {
+        const status = document.getElementById('status');
+        status.textContent = '✓ Sessão ativa detectada. Você já pode entrar no painel.';
+        status.style.display = 'block';
+      }
+    }
+
+    atualizarStatus();
+  </script>
+</body>
+</html>
