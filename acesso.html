@@ -200,9 +200,18 @@
       <input type="text" id="cadastro-nome" placeholder="Seu nome">
     </div>
     <div class="form-group">
+      <label>ID CRS</label>
+      <input type="text" id="cadastro-crs-id" placeholder="ex: CRS-0001">
+    </div>
+    <div class="form-group">
       <label>Email</label>
       <input type="email" id="cadastro-email" placeholder="seu@email.com">
     </div>
+    <div class="form-group">
+      <label>Token de acesso</label>
+      <input type="text" id="cadastro-token" placeholder="Seu código único">
+    </div>
+    <button class="link-btn" onclick="adicionarTokenGratis()">Adicionar grátis (teste)</button>
     <div class="form-group">
       <label>Senha</label>
       <input type="password" id="cadastro-senha" placeholder="mínimo 6 caracteres">
@@ -254,6 +263,11 @@
     el.style.display = 'block';
   }
 
+  function adicionarTokenGratis() {
+    document.getElementById('cadastro-token').value = 'TOKEN-GRATIS-TESTE';
+    mostrarMensagem('msg-cadastro', 'Token grátis de teste adicionado.', 'sucesso');
+  }
+
   async function fazerLogin() {
     const email = document.getElementById('login-email').value.trim();
     const senha = document.getElementById('login-senha').value;
@@ -271,16 +285,26 @@
 
   async function fazerCadastro() {
     const nome = document.getElementById('cadastro-nome').value.trim();
+    const crsId = document.getElementById('cadastro-crs-id').value.trim();
     const email = document.getElementById('cadastro-email').value.trim();
+    const token = document.getElementById('cadastro-token').value.trim();
     const senha = document.getElementById('cadastro-senha').value;
     const btn = document.getElementById('btn-cadastro');
-    if (!nome || !email || !senha) { mostrarMensagem('msg-cadastro', 'Preencha todos os campos.', 'erro'); return; }
+    if (!nome || !crsId || !email || !token || !senha) { mostrarMensagem('msg-cadastro', 'Preencha todos os campos.', 'erro'); return; }
     if (senha.length < 6) { mostrarMensagem('msg-cadastro', 'Senha mínima: 6 caracteres.', 'erro'); return; }
+    if (crsId.length < 4) { mostrarMensagem('msg-cadastro', 'ID CRS inválido.', 'erro'); return; }
+    if (token.length < 6) { mostrarMensagem('msg-cadastro', 'Token inválido.', 'erro'); return; }
     btn.disabled = true; btn.textContent = 'Criando conta...';
     const { error } = await sb.auth.signUp({
       email, password: senha,
       options: {
-        data: { nome_completo: nome },
+        data: {
+          nome_completo: nome,
+          crs_id: crsId,
+          token_status: 'pendente_validacao',
+          token_final: token.slice(-4),
+          owner_check: false
+        },
         emailRedirectTo: 'https://paulorobertoxavierjunior-create.github.io/elayonspace/confirmacao.html'
       }
     });

@@ -126,6 +126,69 @@
     }
 
     .rodape a { color: #5bb5a2; text-decoration: none; }
+
+    .abas {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .aba-btn {
+      padding: 9px 14px;
+      border-radius: 8px;
+      border: 1px solid #c0dde3;
+      background: #ffffff;
+      color: #3a7d8c;
+      font-size: 0.82rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .aba-btn.ativa {
+      background: #3a7d8c;
+      color: #ffffff;
+      border-color: #3a7d8c;
+    }
+
+    .aba-conteudo { display: none; }
+    .aba-conteudo.ativa { display: block; }
+
+    .perfil-card {
+      background: #ffffff;
+      border: 1px solid #d0e4e8;
+      border-radius: 16px;
+      padding: 18px;
+    }
+
+    .perfil-item {
+      font-size: 0.86rem;
+      color: #5a8a94;
+      margin-bottom: 8px;
+    }
+
+    .perfil-item strong { color: #3a7d8c; }
+
+    .check-box {
+      margin-top: 16px;
+      text-align: left;
+      background: #f8fcfd;
+      border: 1px solid #d0e4e8;
+      border-radius: 10px;
+      padding: 12px;
+      display: none;
+    }
+
+    .btn-check {
+      border: 1px solid #5bb5a2;
+      background: #ffffff;
+      color: #2c7c6d;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: bold;
+      padding: 8px 12px;
+      cursor: pointer;
+      margin-bottom: 10px;
+    }
   </style>
 </head>
 <body>
@@ -143,50 +206,71 @@
   <p>Seu espaço está pronto.</p>
 </div>
 
-<div class="destaque">
-  <div class="icone">🎙️</div>
-  <h2>Elayon Vibes</h2>
-  <p>
-    Fale. Encerre. Receba um espelho real da sua comunicação —
-    ritmo, clareza e pontos de melhoria. Sem julgamento.
-  </p>
-  <a class="btn-ferramenta" href="https://paulorobertoxavierjunior-create.github.io/presenca/index.html" target="_blank">
-    Abrir ferramenta
-  </a>
+<div class="abas">
+  <button class="aba-btn ativa" id="btn-aba-operacao" onclick="abrirAba('operacao')">Cockpit</button>
+  <button class="aba-btn" id="btn-aba-perfil" onclick="abrirAba('perfil')">Perfil</button>
 </div>
 
-<div class="secao-titulo">Em breve</div>
+<div id="aba-operacao" class="aba-conteudo ativa">
+  <div class="destaque">
+    <div class="icone">🎙️</div>
+    <h2>Elayon Vibes</h2>
+    <p>
+      Fale. Encerre. Receba um espelho real da sua comunicação —
+      ritmo, clareza e pontos de melhoria. Sem julgamento.
+    </p>
+    <a class="btn-ferramenta" href="https://paulorobertoxavierjunior-create.github.io/presenca/index.html" target="_blank">
+      Abrir ferramenta
+    </a>
+    <div class="check-box" id="bloco-check-sistema">
+      <button class="btn-check" onclick="checarSistema()">Checar sistema</button>
+      <div id="resultado-check" class="perfil-item">Aguardando checagem.</div>
+    </div>
+  </div>
 
-<div class="grid">
-  <div class="card-em-breve">
-    <div class="icone">🧠</div>
-    <h3>PsyQ</h3>
-    <span class="tag-breve">Em breve</span>
+  <div class="secao-titulo">Em breve</div>
+
+  <div class="grid">
+    <div class="card-em-breve">
+      <div class="icone">🧠</div>
+      <h3>PsyQ</h3>
+      <span class="tag-breve">Em breve</span>
+    </div>
+    <div class="card-em-breve">
+      <div class="icone">🔬</div>
+      <h3>Health</h3>
+      <span class="tag-breve">Em breve</span>
+    </div>
+    <div class="card-em-breve">
+      <div class="icone">🦁</div>
+      <h3>Vibrações</h3>
+      <span class="tag-breve">Em breve</span>
+    </div>
+    <div class="card-em-breve">
+      <div class="icone">💻</div>
+      <h3>Elayon PC</h3>
+      <span class="tag-breve">Em breve</span>
+    </div>
+    <div class="card-em-breve">
+      <div class="icone">⚙️</div>
+      <h3>Mechanics</h3>
+      <span class="tag-breve">Em breve</span>
+    </div>
+    <div class="card-em-breve">
+      <div class="icone">🏭</div>
+      <h3>Indústria</h3>
+      <span class="tag-breve">Em breve</span>
+    </div>
   </div>
-  <div class="card-em-breve">
-    <div class="icone">🔬</div>
-    <h3>Health</h3>
-    <span class="tag-breve">Em breve</span>
-  </div>
-  <div class="card-em-breve">
-    <div class="icone">🦁</div>
-    <h3>Vibrações</h3>
-    <span class="tag-breve">Em breve</span>
-  </div>
-  <div class="card-em-breve">
-    <div class="icone">💻</div>
-    <h3>Elayon PC</h3>
-    <span class="tag-breve">Em breve</span>
-  </div>
-  <div class="card-em-breve">
-    <div class="icone">⚙️</div>
-    <h3>Mechanics</h3>
-    <span class="tag-breve">Em breve</span>
-  </div>
-  <div class="card-em-breve">
-    <div class="icone">🏭</div>
-    <h3>Indústria</h3>
-    <span class="tag-breve">Em breve</span>
+</div>
+
+<div id="aba-perfil" class="aba-conteudo">
+  <div class="perfil-card">
+    <div class="perfil-item"><strong>Nome:</strong> <span id="perfil-nome">-</span></div>
+    <div class="perfil-item"><strong>Email:</strong> <span id="perfil-email">-</span></div>
+    <div class="perfil-item"><strong>ID CRS:</strong> <span id="perfil-crs-id">-</span></div>
+    <div class="perfil-item"><strong>Status do Token:</strong> <span id="perfil-token-status">-</span></div>
+    <div class="perfil-item"><strong>Token (final):</strong> <span id="perfil-token-final">-</span></div>
   </div>
 </div>
 
@@ -202,14 +286,56 @@
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1ZGNqaWhmZnJmbWh6bWZ3dGxnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3NDE3MjUsImV4cCI6MjA5MDMxNzcyNX0.2tod6vvl_4SAXzSmW1wU8Mk9pLn8fvhF2xrAZOysUu0'
   );
 
+  let usuarioAtual = null;
+
+  function abrirAba(aba) {
+    document.querySelectorAll('.aba-conteudo').forEach(el => el.classList.remove('ativa'));
+    document.querySelectorAll('.aba-btn').forEach(el => el.classList.remove('ativa'));
+    document.getElementById('aba-' + aba).classList.add('ativa');
+    document.getElementById('btn-aba-' + aba).classList.add('ativa');
+  }
+
+  function atualizarPerfil(user) {
+    const metadata = user.user_metadata || {};
+    const nomeCompleto = metadata.nome_completo || 'visitante';
+    document.getElementById('perfil-nome').textContent = nomeCompleto;
+    document.getElementById('perfil-email').textContent = user.email || '-';
+    document.getElementById('perfil-crs-id').textContent = metadata.crs_id || 'não informado';
+    document.getElementById('perfil-token-status').textContent = metadata.token_status || 'não informado';
+    document.getElementById('perfil-token-final').textContent = metadata.token_final || '----';
+
+    const podeVerCheck = metadata.owner_check === true;
+    document.getElementById('bloco-check-sistema').style.display = podeVerCheck ? 'block' : 'none';
+  }
+
   sb.auth.getSession().then(({ data }) => {
     if (!data.session) {
       window.location.href = 'acesso.html';
     } else {
-      const nome = data.session.user.user_metadata?.nome_completo || 'visitante';
+      usuarioAtual = data.session.user;
+      const nome = usuarioAtual.user_metadata?.nome_completo || 'visitante';
       document.getElementById('nome-usuario').textContent = nome.split(' ')[0];
+      atualizarPerfil(usuarioAtual);
     }
   });
+
+  async function checarSistema() {
+    const output = document.getElementById('resultado-check');
+    output.textContent = 'Checando...';
+
+    const { data } = await sb.auth.getSession();
+    const sessaoOk = !!data.session;
+    const metadata = data.session?.user?.user_metadata || {};
+    const crsOk = !!metadata.crs_id;
+    const tokenOk = !!metadata.token_status && metadata.token_status !== 'invalido';
+    const labOk = 'aguardando configuração';
+
+    output.innerHTML =
+      `Autenticação: ${sessaoOk ? 'OK' : 'falha'}<br>` +
+      `Núcleo CRS (ID): ${crsOk ? 'OK' : 'pendente'}<br>` +
+      `Token: ${tokenOk ? 'OK' : 'pendente'}<br>` +
+      `Lab: ${labOk}`;
+  }
 
   async function sair() {
     await sb.auth.signOut();
