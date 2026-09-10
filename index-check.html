@@ -226,9 +226,9 @@ Não requer autenticação. Dados simulados até integração real.
 
   <script>
     const integracoes = [
-      { nome: "Supabase Auth", status: "online", endpoint: "eudcjihffrfmhzmfwtlg.supabase.co", ultima_verificacao: "2026-09-10 01:35", doc: "https://supabase.com/docs" },
-      { nome: "Render Backend", status: "online", endpoint: "https://elayon-crs.onrender.com", ultima_verificacao: "2026-09-10 01:34", doc: "https://render.com/docs" },
-      { nome: "Núcleo CRS", status: "online", endpoint: "/health", ultima_verificacao: "2026-09-10 01:33", doc: "tecnologia.html" },
+      { nome: "Supabase Auth", status: "online", endpoint: "supabase://projeto-configurado", ultima_verificacao: "2026-09-10 01:35", doc: "https://supabase.com/docs" },
+      { nome: "Render Backend", status: "online", endpoint: "https://backend-elayon.exemplo", ultima_verificacao: "2026-09-10 01:34", doc: "https://render.com/docs" },
+      { nome: "Núcleo CRS", status: "online", endpoint: "/health (simulado)", ultima_verificacao: "2026-09-10 01:33", doc: "tecnologia.html" },
       { nome: "Presença Lab", status: "offline", endpoint: "presenca-lab.local (simulado)", ultima_verificacao: "2026-09-10 01:20", doc: "pesquisa.html" },
       { nome: "PsyQ", status: "awaiting", endpoint: "não configurado", ultima_verificacao: "—", doc: "ecossistema.html" },
       { nome: "Síntese", status: "awaiting", endpoint: "não configurado", ultima_verificacao: "—", doc: "ecossistema.html" },
@@ -251,6 +251,10 @@ Não requer autenticação. Dados simulados até integração real.
     const logsEl = document.getElementById('logs');
     const refreshBtn = document.getElementById('refresh');
 
+    function normalizedStatus(item) {
+      return item.status === 'awaiting' && item.endpoint === 'não configurado' ? 'unconfigured' : item.status;
+    }
+
     function nowString() {
       const d = new Date();
       const pad = (v) => String(v).padStart(2, '0');
@@ -258,8 +262,8 @@ Não requer autenticação. Dados simulados até integração real.
     }
 
     function cardTemplate(item) {
-      const normalizedStatus = item.status === 'awaiting' && item.endpoint === 'não configurado' ? 'unconfigured' : item.status;
-      const status = labels[normalizedStatus] || labels.error;
+      const resolvedStatus = normalizedStatus(item);
+      const status = labels[resolvedStatus] || labels.error;
       const article = document.createElement('article');
       article.className = 'item';
 
@@ -308,9 +312,10 @@ Não requer autenticação. Dados simulados até integração real.
     function render() {
       integrationsEl.replaceChildren(...integracoes.map(cardTemplate));
 
-      const online = integracoes.filter((item) => item.status === 'online').length;
-      const offline = integracoes.filter((item) => item.status === 'offline' || item.status === 'error').length;
-      const awaiting = integracoes.filter((item) => item.status === 'awaiting' || item.status === 'maintenance').length;
+      const resolvedStatuses = integracoes.map(normalizedStatus);
+      const online = resolvedStatuses.filter((status) => status === 'online').length;
+      const offline = resolvedStatuses.filter((status) => status === 'offline' || status === 'error').length;
+      const awaiting = resolvedStatuses.filter((status) => status === 'awaiting' || status === 'maintenance' || status === 'unconfigured').length;
 
       const onlineStat = document.createElement('strong');
       onlineStat.textContent = `Online: ${online}`;
@@ -331,7 +336,7 @@ Não requer autenticação. Dados simulados até integração real.
     refreshBtn.addEventListener('click', () => {
       const timestamp = nowString();
       integracoes.forEach((item) => {
-        if (item.status !== 'awaiting') {
+        if (normalizedStatus(item) !== 'unconfigured') {
           item.ultima_verificacao = timestamp;
         }
       });
