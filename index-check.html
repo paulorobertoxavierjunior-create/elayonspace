@@ -229,7 +229,7 @@ Não requer autenticação. Dados simulados até integração real.
       { nome: "Supabase Auth", status: "online", endpoint: "eudcjihffrfmhzmfwtlg.supabase.co", ultima_verificacao: "2026-09-10 01:35", doc: "https://supabase.com/docs" },
       { nome: "Render Backend", status: "online", endpoint: "https://elayon-crs.onrender.com", ultima_verificacao: "2026-09-10 01:34", doc: "https://render.com/docs" },
       { nome: "Núcleo CRS", status: "online", endpoint: "/health", ultima_verificacao: "2026-09-10 01:33", doc: "tecnologia.html" },
-      { nome: "Presença Lab", status: "offline", endpoint: "localhost:3000", ultima_verificacao: "2026-09-10 01:20", doc: "pesquisa.html" },
+      { nome: "Presença Lab", status: "offline", endpoint: "presenca-lab.local (simulado)", ultima_verificacao: "2026-09-10 01:20", doc: "pesquisa.html" },
       { nome: "PsyQ", status: "awaiting", endpoint: "não configurado", ultima_verificacao: "—", doc: "ecossistema.html" },
       { nome: "Síntese", status: "awaiting", endpoint: "não configurado", ultima_verificacao: "—", doc: "ecossistema.html" },
       { nome: "Validação", status: "awaiting", endpoint: "não configurado", ultima_verificacao: "—", doc: "ecossistema.html" },
@@ -260,37 +260,72 @@ Não requer autenticação. Dados simulados até integração real.
     function cardTemplate(item) {
       const normalizedStatus = item.status === 'awaiting' && item.endpoint === 'não configurado' ? 'unconfigured' : item.status;
       const status = labels[normalizedStatus] || labels.error;
-      return `
-        <article class="item">
-          <div class="item-head">
-            <strong class="item-name">${item.nome}</strong>
-            <span class="status ${status.cls}">${status.text}</span>
-          </div>
-          <dl>
-            <dt>Endpoint</dt><dd>${item.endpoint}</dd>
-            <dt>Última</dt><dd>${item.ultima_verificacao}</dd>
-            <dt>Doc</dt><dd><a href="${item.doc}" target="_blank" rel="noreferrer">Abrir</a></dd>
-          </dl>
-        </article>
-      `;
+      const article = document.createElement('article');
+      article.className = 'item';
+
+      const head = document.createElement('div');
+      head.className = 'item-head';
+
+      const name = document.createElement('strong');
+      name.className = 'item-name';
+      name.textContent = item.nome;
+
+      const badge = document.createElement('span');
+      badge.className = `status ${status.cls}`;
+      badge.textContent = status.text;
+
+      head.append(name, badge);
+
+      const infoList = document.createElement('dl');
+      const rows = [
+        ['Endpoint', item.endpoint],
+        ['Última', item.ultima_verificacao]
+      ];
+
+      rows.forEach(([label, value]) => {
+        const dt = document.createElement('dt');
+        dt.textContent = label;
+        const dd = document.createElement('dd');
+        dd.textContent = value;
+        infoList.append(dt, dd);
+      });
+
+      const dtDoc = document.createElement('dt');
+      dtDoc.textContent = 'Doc';
+      const ddDoc = document.createElement('dd');
+      const docLink = document.createElement('a');
+      docLink.href = item.doc;
+      docLink.target = '_blank';
+      docLink.rel = 'noopener noreferrer';
+      docLink.textContent = 'Abrir';
+      ddDoc.appendChild(docLink);
+      infoList.append(dtDoc, ddDoc);
+
+      article.append(head, infoList);
+      return article;
     }
 
     function render() {
-      integrationsEl.innerHTML = integracoes.map(cardTemplate).join('');
+      integrationsEl.replaceChildren(...integracoes.map(cardTemplate));
 
       const online = integracoes.filter((item) => item.status === 'online').length;
       const offline = integracoes.filter((item) => item.status === 'offline' || item.status === 'error').length;
       const awaiting = integracoes.filter((item) => item.status === 'awaiting' || item.status === 'maintenance').length;
 
-      statsEl.innerHTML = `
-        <strong>Online: ${online}</strong>
-        <strong>Offline/Erro: ${offline}</strong>
-        <strong>Aguardando: ${awaiting}</strong>
-      `;
+      const onlineStat = document.createElement('strong');
+      onlineStat.textContent = `Online: ${online}`;
+      const offlineStat = document.createElement('strong');
+      offlineStat.textContent = `Offline/Erro: ${offline}`;
+      const awaitingStat = document.createElement('strong');
+      awaitingStat.textContent = `Aguardando: ${awaiting}`;
+      statsEl.replaceChildren(onlineStat, offlineStat, awaitingStat);
 
       const checkedAt = nowString();
       lastCheckEl.textContent = `Última verificação geral: ${checkedAt}`;
-      logsEl.insertAdjacentHTML('afterbegin', `<div class="log-row">${checkedAt} • Verificação concluída (${online} online, ${offline} offline/erro, ${awaiting} aguardando).</div>`);
+      const logRow = document.createElement('div');
+      logRow.className = 'log-row';
+      logRow.textContent = `${checkedAt} • Verificação concluída (${online} online, ${offline} offline/erro, ${awaiting} aguardando).`;
+      logsEl.prepend(logRow);
     }
 
     refreshBtn.addEventListener('click', () => {
