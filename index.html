@@ -16,28 +16,11 @@
       flex-direction: column;
     }
 
-    .top-nav {
-      width: min(1120px, calc(100% - 32px));
-      margin: 20px auto 0;
-      display: flex;
-      justify-content: flex-end;
-      gap: 12px;
-      font-size: 0.88rem;
-    }
-
-    .top-nav a {
-      color: #3a7d8c;
-      text-decoration: none;
-      font-weight: 600;
-    }
-
-    .top-nav a:hover { text-decoration: underline; }
-
     main {
       flex: 1;
       display: grid;
       place-items: center;
-      padding: 24px 16px 32px;
+      padding: 32px 16px 32px;
     }
 
     .hero {
@@ -109,11 +92,6 @@
     }
 
     @media (max-width: 640px) {
-      .top-nav {
-        justify-content: center;
-        margin-top: 14px;
-      }
-
       .hero {
         border-radius: 18px;
         padding: 36px 20px;
@@ -126,10 +104,6 @@
   </style>
 </head>
 <body>
-  <nav class="top-nav" aria-label="Navegação principal">
-    <a href="index-check.html">Index Check</a>
-  </nav>
-
   <main>
     <section class="hero">
       <img src="IMG-20260218-WA0015.jpg" alt="Logo Elayon">

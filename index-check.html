@@ -4,6 +4,7 @@ ELAYON SPACE — INDEX CHECK
 Painel de verificação de saúde do sistema para administradores.
 Mostra estado de todas as integrações e serviços críticos.
 Não requer autenticação. Dados simulados até integração real.
+Página temporária de demonstração para evolução de integrações.
 -->
 <html lang="pt-br">
 <head>
@@ -212,7 +213,7 @@ Não requer autenticação. Dados simulados até integração real.
     <section class="panel summary">
       <div>
         <h2>Estado Geral</h2>
-        <div class="stats" id="stats" aria-live="polite"></div>
+        <div class="stats" id="stats"></div>
         <p id="last-check" style="font-size:0.84rem;color:#4d7f88;" aria-live="polite"></p>
       </div>
       <button class="refresh" id="refresh">Atualizar verificação</button>
@@ -220,7 +221,7 @@ Não requer autenticação. Dados simulados até integração real.
 
     <section class="panel">
       <h2>Logs</h2>
-      <div class="logs" id="logs" aria-live="polite"></div>
+      <div class="logs" id="logs"></div>
     </section>
   </div>
 
