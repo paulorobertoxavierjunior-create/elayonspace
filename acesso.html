@@ -241,12 +241,106 @@
   const { createClient } = supabase;
   const sb = createClient(
     'https://eudcjihffrfmhzmfwtlg.supabase.co',
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1ZGNqaWhmZnJmbWh6bWZ3dGxnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3NDE3MjUsImV4cCI6MjA5MDMxNzcyNX0.2tod6vvl_4SAXzSmW1wU8Mk9pLn8fvhF2xrAZOysUu0'
+    '******'
   );
 
-  sb.auth.getSession().then(({ data }) => {
-    if (data.session) window.location.href = 'painel.html';
-  });
+  const FLOW = {
+    cadastro: {
+      PENDENTE: 'pendente_confirmacao',
+      VALIDO: 'valido',
+      BLOQUEADO: 'bloqueado'
+    },
+    token: {
+      VALIDO: 'valido',
+      VALIDO_TESTE: 'valido_teste',
+      CONSUMIDO: 'consumido',
+      INVALIDO: 'invalido',
+      EXPIRADO: 'expirado'
+    },
+    sessao: {
+      AUTENTICADA: 'autenticada',
+      NAO_AUTENTICADA: 'nao_autenticada'
+    }
+  };
+
+  const API_TIMEOUT_MS = 7000;
+  const API_BASE = window.CRS_CONFIG?.apiBase || 'https://crs-full-api.onrender.com';
+
+  function withTimeout(promiseFactory, timeout = API_TIMEOUT_MS) {
+    return Promise.race([
+      promiseFactory(),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), timeout))
+    ]);
+  }
+
+  async function postJson(url, payload) {
+    const response = await withTimeout(() => fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    }));
+
+    if (!response.ok) {
+      throw new Error('http_' + response.status);
+    }
+
+    return response.json();
+  }
+
+  const authApi = {
+    signIn: (email, password) => sb.auth.signInWithPassword({ email, password }),
+    signUp: (email, password, data) => sb.auth.signUp({
+      email,
+      password,
+      options: {
+        data,
+        emailRedirectTo: 'https://paulorobertoxavierjunior-create.github.io/elayonspace/confirmacao.html'
+      }
+    }),
+    getSession: () => sb.auth.getSession(),
+    signOut: () => sb.auth.signOut(),
+    resetPassword: (email) => sb.auth.resetPasswordForEmail(email, {
+      redirectTo: 'https://paulorobertoxavierjunior-create.github.io/elayonspace/confirmacao.html'
+    })
+  };
+
+  const tokenApi = {
+    async validate(token, crsId, email) {
+      if (token === 'TOKEN-GRATIS-TESTE') {
+        return { ok: true, state: FLOW.token.VALIDO_TESTE, source: 'local' };
+      }
+
+      try {
+        const data = await postJson(`${API_BASE}/tokens/validate`, { token, crsId, email });
+        if (data?.valid === true) {
+          return { ok: true, state: FLOW.token.VALIDO, source: 'remote' };
+        }
+        return { ok: false, state: data?.state || FLOW.token.INVALIDO, message: data?.message || 'Token inválido.' };
+      } catch (_) {
+        return { ok: false, state: 'indisponivel', message: 'Serviço de token indisponível no momento.' };
+      }
+    },
+
+    async consume(token, email) {
+      if (token === 'TOKEN-GRATIS-TESTE') {
+        return { ok: true, state: FLOW.token.VALIDO_TESTE, source: 'local' };
+      }
+
+      try {
+        const data = await postJson(`${API_BASE}/tokens/consume`, { token, email });
+        if (data?.ok === true) {
+          return { ok: true, state: data?.state || FLOW.token.CONSUMIDO, source: 'remote' };
+        }
+        return { ok: false, state: data?.state || FLOW.token.INVALIDO, message: data?.message || 'Token já utilizado ou inválido.' };
+      } catch (_) {
+        return { ok: false, state: 'indisponivel', message: 'Não foi possível consumir o token agora.' };
+      }
+    }
+  };
+
+  function normalizarCrsId(valor) {
+    return valor.toUpperCase().replace(/\s+/g, '');
+  }
 
   function mostrarSecao(secao) {
     document.querySelectorAll('.secao').forEach(s => s.classList.remove('ativa'));
@@ -268,67 +362,185 @@
     mostrarMensagem('msg-cadastro', 'Token grátis de teste adicionado.', 'sucesso');
   }
 
+  function tratarMensagensURL() {
+    const params = new URLSearchParams(window.location.search);
+    const status = params.get('status');
+    const reason = params.get('reason');
+
+    if (status === 'email_confirmado') {
+      mostrarMensagem('msg-login', 'Email confirmado. Agora faça login.', 'sucesso');
+    }
+
+    if (reason === 'confirmar_email') {
+      mostrarMensagem('msg-login', 'Confirme seu email antes de entrar no cockpit.', 'erro');
+    }
+
+    if (reason === 'sem_sessao') {
+      mostrarMensagem('msg-login', 'Faça login para acessar o cockpit.', 'erro');
+    }
+
+    if (reason === 'token_invalido') {
+      mostrarMensagem('msg-login', 'Seu token não está pronto para operação.', 'erro');
+    }
+  }
+
+  async function validarSessaoAtual() {
+    try {
+      const { data } = await withTimeout(() => authApi.getSession());
+      if (data.session) {
+        window.location.href = 'painel.html';
+      }
+    } catch (_) {
+      mostrarMensagem('msg-login', 'Não foi possível validar sessão agora. Tente novamente.', 'erro');
+    }
+  }
+
   async function fazerLogin() {
     const email = document.getElementById('login-email').value.trim();
     const senha = document.getElementById('login-senha').value;
     const btn = document.getElementById('btn-login');
-    if (!email || !senha) { mostrarMensagem('msg-login', 'Preencha email e senha.', 'erro'); return; }
-    btn.disabled = true; btn.textContent = 'Entrando...';
-    const { error } = await sb.auth.signInWithPassword({ email, password: senha });
-    if (error) {
-      mostrarMensagem('msg-login', 'Email ou senha incorretos.', 'erro');
-      btn.disabled = false; btn.textContent = 'Entrar';
-    } else {
+
+    if (!email || !senha) {
+      mostrarMensagem('msg-login', 'Preencha email e senha.', 'erro');
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Entrando...';
+
+    try {
+      const { error } = await withTimeout(() => authApi.signIn(email, senha));
+      if (error) {
+        mostrarMensagem('msg-login', 'Email ou senha incorretos.', 'erro');
+        return;
+      }
+
+      const { data } = await withTimeout(() => authApi.getSession());
+      const user = data.session?.user;
+
+      if (!user) {
+        mostrarMensagem('msg-login', 'Sessão inválida. Tente novamente.', 'erro');
+        return;
+      }
+
+      if (!user.email_confirmed_at) {
+        await authApi.signOut();
+        mostrarMensagem('msg-login', 'Confirme seu email antes de continuar.', 'erro');
+        return;
+      }
+
+      const metadata = user.user_metadata || {};
+      const tokenStatus = metadata.token_status;
+      const tokenPermitido = [FLOW.token.VALIDO, FLOW.token.VALIDO_TESTE, FLOW.token.CONSUMIDO].includes(tokenStatus);
+
+      if (!metadata.crs_id || !tokenPermitido) {
+        await authApi.signOut();
+        mostrarMensagem('msg-login', 'Cadastro sem autorização completa (ID/Token).', 'erro');
+        return;
+      }
+
       window.location.href = 'painel.html';
+    } catch (_) {
+      mostrarMensagem('msg-login', 'Falha de conexão. Tente novamente.', 'erro');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Entrar';
     }
   }
 
   async function fazerCadastro() {
     const nome = document.getElementById('cadastro-nome').value.trim();
-    const crsId = document.getElementById('cadastro-crs-id').value.trim();
+    const crsId = normalizarCrsId(document.getElementById('cadastro-crs-id').value.trim());
     const email = document.getElementById('cadastro-email').value.trim();
     const token = document.getElementById('cadastro-token').value.trim();
     const senha = document.getElementById('cadastro-senha').value;
     const btn = document.getElementById('btn-cadastro');
-    if (!nome || !crsId || !email || !token || !senha) { mostrarMensagem('msg-cadastro', 'Preencha todos os campos.', 'erro'); return; }
-    if (senha.length < 6) { mostrarMensagem('msg-cadastro', 'Senha mínima: 6 caracteres.', 'erro'); return; }
-    if (crsId.length < 4) { mostrarMensagem('msg-cadastro', 'ID CRS inválido.', 'erro'); return; }
-    if (token.length < 6) { mostrarMensagem('msg-cadastro', 'Token inválido.', 'erro'); return; }
-    btn.disabled = true; btn.textContent = 'Criando conta...';
-    const { error } = await sb.auth.signUp({
-      email, password: senha,
-      options: {
-        data: {
-          nome_completo: nome,
-          crs_id: crsId,
-          token_status: 'pendente_validacao',
-          token_final: token.slice(-4),
-          owner_check: false
-        },
-        emailRedirectTo: 'https://paulorobertoxavierjunior-create.github.io/elayonspace/confirmacao.html'
+
+    if (!nome || !crsId || !email || !token || !senha) {
+      mostrarMensagem('msg-cadastro', 'Preencha todos os campos.', 'erro');
+      return;
+    }
+
+    if (senha.length < 6) {
+      mostrarMensagem('msg-cadastro', 'Senha mínima: 6 caracteres.', 'erro');
+      return;
+    }
+
+    if (crsId.length < 4) {
+      mostrarMensagem('msg-cadastro', 'ID CRS inválido.', 'erro');
+      return;
+    }
+
+    if (token.length < 6) {
+      mostrarMensagem('msg-cadastro', 'Token inválido.', 'erro');
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Validando token...';
+
+    try {
+      const validacao = await tokenApi.validate(token, crsId, email);
+      if (!validacao.ok) {
+        mostrarMensagem('msg-cadastro', validacao.message || 'Token bloqueado.', 'erro');
+        return;
       }
-    });
-    if (error) {
-      mostrarMensagem('msg-cadastro', 'Erro: ' + error.message, 'erro');
-      btn.disabled = false; btn.textContent = 'Criar conta';
-    } else {
-      mostrarMensagem('msg-cadastro', '✓ Verifique seu email para confirmar o acesso.', 'sucesso');
+
+      btn.textContent = 'Consumindo token...';
+      const consumo = await tokenApi.consume(token, email);
+      if (!consumo.ok) {
+        mostrarMensagem('msg-cadastro', consumo.message || 'Não foi possível usar seu token.', 'erro');
+        return;
+      }
+
+      btn.textContent = 'Criando conta...';
+      const { error } = await withTimeout(() => authApi.signUp(email, senha, {
+        nome_completo: nome,
+        crs_id: crsId,
+        cadastro_status: FLOW.cadastro.PENDENTE,
+        token_status: consumo.state || validacao.state,
+        token_final: token.slice(-4),
+        owner_check: false
+      }));
+
+      if (error) {
+        mostrarMensagem('msg-cadastro', 'Erro: ' + error.message, 'erro');
+        return;
+      }
+
+      mostrarMensagem('msg-cadastro', '✓ Verifique seu email para confirmar o acesso e depois faça login.', 'sucesso');
       btn.textContent = 'Email enviado ✓';
+    } catch (_) {
+      mostrarMensagem('msg-cadastro', 'Falha de comunicação com serviços. Tente novamente.', 'erro');
+    } finally {
+      btn.disabled = false;
+      if (btn.textContent !== 'Email enviado ✓') {
+        btn.textContent = 'Criar conta';
+      }
     }
   }
 
   async function recuperarSenha() {
     const email = document.getElementById('recuperar-email').value.trim();
-    if (!email) { mostrarMensagem('msg-recuperar', 'Digite seu email.', 'erro'); return; }
-    const { error } = await sb.auth.resetPasswordForEmail(email, {
-      redirectTo: 'https://paulorobertoxavierjunior-create.github.io/elayonspace/confirmacao.html'
-    });
-    if (error) {
-      mostrarMensagem('msg-recuperar', 'Erro ao enviar email.', 'erro');
-    } else {
-      mostrarMensagem('msg-recuperar', '✓ Link enviado! Verifique seu email.', 'sucesso');
+    if (!email) {
+      mostrarMensagem('msg-recuperar', 'Digite seu email.', 'erro');
+      return;
+    }
+
+    try {
+      const { error } = await withTimeout(() => authApi.resetPassword(email));
+      if (error) {
+        mostrarMensagem('msg-recuperar', 'Erro ao enviar email.', 'erro');
+      } else {
+        mostrarMensagem('msg-recuperar', '✓ Link enviado! Verifique seu email.', 'sucesso');
+      }
+    } catch (_) {
+      mostrarMensagem('msg-recuperar', 'Falha de conexão. Tente novamente.', 'erro');
     }
   }
+
+  tratarMensagensURL();
+  validarSessaoAtual();
 </script>
 </body>
 </html>

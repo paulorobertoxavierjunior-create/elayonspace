@@ -269,6 +269,7 @@
     <div class="perfil-item"><strong>Nome:</strong> <span id="perfil-nome">-</span></div>
     <div class="perfil-item"><strong>Email:</strong> <span id="perfil-email">-</span></div>
     <div class="perfil-item"><strong>ID CRS:</strong> <span id="perfil-crs-id">-</span></div>
+    <div class="perfil-item"><strong>Status de Cadastro:</strong> <span id="perfil-cadastro-status">-</span></div>
     <div class="perfil-item"><strong>Status do Token:</strong> <span id="perfil-token-status">-</span></div>
     <div class="perfil-item"><strong>Token (final):</strong> <span id="perfil-token-final">-</span></div>
   </div>
@@ -283,10 +284,42 @@
   const { createClient } = supabase;
   const sb = createClient(
     'https://eudcjihffrfmhzmfwtlg.supabase.co',
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1ZGNqaWhmZnJmbWh6bWZ3dGxnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3NDE3MjUsImV4cCI6MjA5MDMxNzcyNX0.2tod6vvl_4SAXzSmW1wU8Mk9pLn8fvhF2xrAZOysUu0'
+    '******'
   );
 
+  const FLOW = {
+    token: {
+      VALIDO: 'valido',
+      VALIDO_TESTE: 'valido_teste',
+      CONSUMIDO: 'consumido',
+      INVALIDO: 'invalido',
+      EXPIRADO: 'expirado'
+    },
+    sistema: {
+      PRONTO: 'pronto',
+      DEGRADADO: 'degradado',
+      INDISPONIVEL: 'indisponivel'
+    }
+  };
+
+  const API_TIMEOUT_MS = 7000;
+  const API_BASE = window.CRS_CONFIG?.apiBase || 'https://crs-full-api.onrender.com';
   let usuarioAtual = null;
+
+  function withTimeout(promiseFactory, timeout = API_TIMEOUT_MS) {
+    return Promise.race([
+      promiseFactory(),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), timeout))
+    ]);
+  }
+
+  async function fetchJson(url) {
+    const response = await withTimeout(() => fetch(url));
+    if (!response.ok) {
+      throw new Error('http_' + response.status);
+    }
+    return response.json();
+  }
 
   function abrirAba(aba) {
     document.querySelectorAll('.aba-conteudo').forEach(el => el.classList.remove('ativa'));
@@ -301,6 +334,7 @@
     document.getElementById('perfil-nome').textContent = nomeCompleto;
     document.getElementById('perfil-email').textContent = user.email || '-';
     document.getElementById('perfil-crs-id').textContent = metadata.crs_id || 'não informado';
+    document.getElementById('perfil-cadastro-status').textContent = metadata.cadastro_status || 'não informado';
     document.getElementById('perfil-token-status').textContent = metadata.token_status || 'não informado';
     document.getElementById('perfil-token-final').textContent = metadata.token_final || '----';
 
@@ -308,39 +342,106 @@
     document.getElementById('bloco-check-sistema').style.display = podeVerCheck ? 'block' : 'none';
   }
 
-  sb.auth.getSession().then(({ data }) => {
-    if (!data.session) {
-      window.location.href = 'acesso.html';
-    } else {
+  async function carregarSessao() {
+    try {
+      const { data } = await withTimeout(() => sb.auth.getSession());
+
+      if (!data.session) {
+        window.location.href = 'acesso.html?reason=sem_sessao';
+        return;
+      }
+
       usuarioAtual = data.session.user;
-      const nome = usuarioAtual.user_metadata?.nome_completo || 'visitante';
+
+      if (!usuarioAtual.email_confirmed_at) {
+        await sb.auth.signOut();
+        window.location.href = 'acesso.html?reason=confirmar_email';
+        return;
+      }
+
+      const metadata = usuarioAtual.user_metadata || {};
+      const tokenPermitido = [FLOW.token.VALIDO, FLOW.token.VALIDO_TESTE, FLOW.token.CONSUMIDO].includes(metadata.token_status);
+
+      if (!metadata.crs_id || !tokenPermitido) {
+        await sb.auth.signOut();
+        window.location.href = 'acesso.html?reason=token_invalido';
+        return;
+      }
+
+      if (metadata.cadastro_status === 'pendente_confirmacao') {
+        sb.auth.updateUser({ data: { ...metadata, cadastro_status: 'valido' } }).catch(() => {});
+      }
+
+      const nome = metadata.nome_completo || 'visitante';
       document.getElementById('nome-usuario').textContent = nome.split(' ')[0];
       atualizarPerfil(usuarioAtual);
+    } catch (_) {
+      window.location.href = 'acesso.html?reason=sem_sessao';
     }
-  });
+  }
 
   async function checarSistema() {
     const output = document.getElementById('resultado-check');
     output.textContent = 'Checando...';
 
-    const { data } = await sb.auth.getSession();
-    const sessaoOk = !!data.session;
-    const metadata = data.session?.user?.user_metadata || {};
-    const crsOk = !!metadata.crs_id;
-    const tokenOk = !!metadata.token_status && metadata.token_status !== 'invalido';
-    const labOk = 'aguardando configuração';
+    let sessao = false;
+    let token = false;
+    let coreStatus = FLOW.sistema.INDISPONIVEL;
+    let labStatus = FLOW.sistema.INDISPONIVEL;
+    let tokenServiceStatus = FLOW.sistema.INDISPONIVEL;
+
+    try {
+      const { data } = await withTimeout(() => sb.auth.getSession());
+      sessao = !!data.session;
+      const metadata = data.session?.user?.user_metadata || {};
+      token = [FLOW.token.VALIDO, FLOW.token.VALIDO_TESTE, FLOW.token.CONSUMIDO].includes(metadata.token_status);
+    } catch (_) {
+      sessao = false;
+    }
+
+    try {
+      const core = await fetchJson(`${API_BASE}/health/core`);
+      coreStatus = core?.status || FLOW.sistema.DEGRADADO;
+    } catch (_) {
+      coreStatus = FLOW.sistema.INDISPONIVEL;
+    }
+
+    try {
+      const lab = await fetchJson(`${API_BASE}/health/lab`);
+      labStatus = lab?.status || FLOW.sistema.DEGRADADO;
+    } catch (_) {
+      labStatus = FLOW.sistema.INDISPONIVEL;
+    }
+
+    try {
+      const tokenHealth = await fetchJson(`${API_BASE}/health/tokens`);
+      tokenServiceStatus = tokenHealth?.status || FLOW.sistema.DEGRADADO;
+    } catch (_) {
+      tokenServiceStatus = FLOW.sistema.INDISPONIVEL;
+    }
+
+    const tudoPronto = sessao && token && coreStatus === FLOW.sistema.PRONTO && labStatus === FLOW.sistema.PRONTO && tokenServiceStatus === FLOW.sistema.PRONTO;
+    const algumAtivo = sessao || token || coreStatus !== FLOW.sistema.INDISPONIVEL || labStatus !== FLOW.sistema.INDISPONIVEL || tokenServiceStatus !== FLOW.sistema.INDISPONIVEL;
+
+    const estadoGeral = tudoPronto
+      ? FLOW.sistema.PRONTO
+      : (algumAtivo ? FLOW.sistema.DEGRADADO : FLOW.sistema.INDISPONIVEL);
 
     output.innerHTML =
-      `Autenticação: ${sessaoOk ? 'OK' : 'falha'}<br>` +
-      `Núcleo CRS (ID): ${crsOk ? 'OK' : 'pendente'}<br>` +
-      `Token: ${tokenOk ? 'OK' : 'pendente'}<br>` +
-      `Lab: ${labOk}`;
+      `Estado geral: ${estadoGeral}<br>` +
+      `Auth: ${sessao ? 'autenticada' : 'não autenticada'}<br>` +
+      `Token: ${token ? 'autorizado' : 'não autorizado'}<br>` +
+      `Núcleo CRS: ${coreStatus}<br>` +
+      `Lab: ${labStatus}<br>` +
+      `Serviço de token: ${tokenServiceStatus}`;
   }
 
   async function sair() {
     await sb.auth.signOut();
     window.location.href = 'https://elayon.space';
   }
+
+  carregarSessao();
 </script>
 
 </body>

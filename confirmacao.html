@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confirmação • Elayon Space</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f4f5;
+      color: #2a2a2a;
+      min-height: 100vh;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 440px;
+      background: #ffffff;
+      border: 1px solid #d0e4e8;
+      border-radius: 16px;
+      padding: 28px;
+      text-align: center;
+      box-shadow: 0 4px 24px rgba(58, 125, 140, 0.1);
+    }
+
+    h1 { color: #3a7d8c; font-size: 1.35rem; margin: 0 0 10px; }
+    p { color: #5a8a94; font-size: 0.9rem; line-height: 1.6; }
+
+    .status {
+      margin: 14px 0 18px;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 0.86rem;
+      background: #f5fafb;
+      border: 1px solid #d0e4e8;
+    }
+
+    .btn {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 12px 18px;
+      border-radius: 10px;
+      text-decoration: none;
+      color: #ffffff;
+      background: linear-gradient(135deg, #3a7d8c, #5bb5a2);
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Confirmação de acesso</h1>
+    <p>Estamos validando seu link de confirmação.</p>
+    <div class="status" id="status">Processando...</div>
+    <a class="btn" href="acesso.html?status=email_confirmado">Ir para login</a>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const { createClient } = supabase;
+    const sb = createClient(
+      'https://eudcjihffrfmhzmfwtlg.supabase.co',
+      '******'
+    );
+
+    async function processarConfirmacao() {
+      const statusEl = document.getElementById('status');
+
+      try {
+        const { data } = await sb.auth.getSession();
+        if (data.session?.user) {
+          await sb.auth.signOut();
+          statusEl.textContent = 'Email confirmado com sucesso. Agora faça login para entrar no cockpit.';
+          return;
+        }
+
+        statusEl.textContent = 'Link processado. Faça login para continuar.';
+      } catch (_) {
+        statusEl.textContent = 'Não foi possível validar automaticamente. Faça login para continuar.';
+      }
+    }
+
+    processarConfirmacao();
+  </script>
+</body>
+</html>
