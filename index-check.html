@@ -227,14 +227,14 @@ Página temporária de demonstração para evolução de integrações.
 
   <script>
     const integracoes = [
-      { nome: "Supabase Auth", status: "online", endpoint: "endpoint oculto (modo público)", ultima_verificacao: "2026-09-10 01:35", doc: "https://supabase.com/docs" },
-      { nome: "Render Backend", status: "online", endpoint: "endpoint oculto (modo público)", ultima_verificacao: "2026-09-10 01:34", doc: "https://render.com/docs" },
-      { nome: "Núcleo CRS", status: "online", endpoint: "endpoint oculto (modo público)", ultima_verificacao: "2026-09-10 01:33", doc: "tecnologia.html" },
-      { nome: "Presença Lab", status: "offline", endpoint: "endpoint oculto (modo público)", ultima_verificacao: "2026-09-10 01:20", doc: "ecossistema.html" },
-      { nome: "PsyQ", status: "awaiting", endpoint: "não configurado", ultima_verificacao: "—", doc: "ecossistema.html" },
-      { nome: "Síntese", status: "awaiting", endpoint: "não configurado", ultima_verificacao: "—", doc: "ecossistema.html" },
-      { nome: "Validação", status: "awaiting", endpoint: "não configurado", ultima_verificacao: "—", doc: "ecossistema.html" },
-      { nome: "Conversação IA", status: "awaiting", endpoint: "não configurado", ultima_verificacao: "—", doc: "ecossistema.html" }
+      { nome: "Supabase Auth", status: "online", endpoint: "endpoint oculto (modo público)", ultimaVerificacao: "2026-09-10 01:35", linkDoc: "https://supabase.com/docs" },
+      { nome: "Render Backend", status: "online", endpoint: "endpoint oculto (modo público)", ultimaVerificacao: "2026-09-10 01:34", linkDoc: "https://render.com/docs" },
+      { nome: "Núcleo CRS", status: "online", endpoint: "endpoint oculto (modo público)", ultimaVerificacao: "2026-09-10 01:33", linkDoc: "tecnologia.html" },
+      { nome: "Presença Lab", status: "offline", endpoint: "endpoint oculto (modo público)", ultimaVerificacao: "2026-09-10 01:20", linkDoc: "ecossistema.html" },
+      { nome: "PsyQ", status: "awaiting", endpoint: "não configurado", ultimaVerificacao: "—", linkDoc: "ecossistema.html" },
+      { nome: "Síntese", status: "awaiting", endpoint: "não configurado", ultimaVerificacao: "—", linkDoc: "ecossistema.html" },
+      { nome: "Validação", status: "awaiting", endpoint: "não configurado", ultimaVerificacao: "—", linkDoc: "ecossistema.html" },
+      { nome: "Conversação IA", status: "awaiting", endpoint: "não configurado", ultimaVerificacao: "—", linkDoc: "ecossistema.html" }
     ];
 
     const labels = {
@@ -285,7 +285,7 @@ Página temporária de demonstração para evolução de integrações.
       const infoList = document.createElement('dl');
       const rows = [
         ['Endpoint', item.endpoint],
-        ['Última', item.ultima_verificacao]
+        ['Última', item.ultimaVerificacao]
       ];
 
       rows.forEach(([label, value]) => {
@@ -300,10 +300,10 @@ Página temporária de demonstração para evolução de integrações.
       dtDoc.textContent = 'Doc';
       const ddDoc = document.createElement('dd');
       const docLink = document.createElement('a');
-      docLink.href = item.doc;
+      docLink.href = item.linkDoc;
       docLink.target = '_blank';
       docLink.rel = 'noopener noreferrer';
-      docLink.textContent = 'Abrir';
+      docLink.textContent = `Abrir doc de ${item.nome}`;
       ddDoc.appendChild(docLink);
       infoList.append(dtDoc, ddDoc);
 
@@ -342,7 +342,7 @@ Página temporária de demonstração para evolução de integrações.
       const timestamp = nowString();
       integracoes.forEach((item) => {
         if (normalizedStatus(item) !== 'unconfigured') {
-          item.ultima_verificacao = timestamp;
+          item.ultimaVerificacao = timestamp;
         }
       });
       render();
