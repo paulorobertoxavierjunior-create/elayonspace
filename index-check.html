@@ -321,7 +321,7 @@ Página temporária de demonstração para evolução de integrações.
       return article;
     }
 
-    function render() {
+    function render({ checkedAt, logCheck } = {}) {
       integrationsEl.replaceChildren(...integracoes.map(cardTemplate));
 
       const resolvedStatuses = integracoes.map(normalizedStatus);
@@ -337,14 +337,20 @@ Página temporária de demonstração para evolução de integrações.
       awaitingStat.textContent = `Aguardando: ${awaiting}`;
       statsEl.replaceChildren(onlineStat, offlineStat, awaitingStat);
 
-      const checkedAt = nowString();
-      lastCheckEl.textContent = `Última verificação geral: ${checkedAt}`;
-      const logRow = document.createElement('div');
-      logRow.className = 'log-row';
-      logRow.textContent = `${checkedAt} • Verificação concluída (${online} online, ${offline} offline/erro, ${awaiting} aguardando).`;
-      logsEl.prepend(logRow);
-      while (logsEl.children.length > LOG_LIMIT) {
-        logsEl.removeChild(logsEl.lastElementChild);
+      if (checkedAt) {
+        lastCheckEl.textContent = `Última verificação geral: ${checkedAt}`;
+      } else {
+        lastCheckEl.textContent = 'Última verificação geral: aguardando atualização manual.';
+      }
+
+      if (logCheck && checkedAt) {
+        const logRow = document.createElement('div');
+        logRow.className = 'log-row';
+        logRow.textContent = `${checkedAt} • Verificação concluída (${online} online, ${offline} offline/erro, ${awaiting} aguardando).`;
+        logsEl.prepend(logRow);
+        while (logsEl.children.length > LOG_LIMIT) {
+          logsEl.removeChild(logsEl.lastElementChild);
+        }
       }
     }
 
@@ -355,7 +361,7 @@ Página temporária de demonstração para evolução de integrações.
           item.ultimaVerificacao = timestamp;
         }
       });
-      render();
+      render({ checkedAt: timestamp, logCheck: true });
     });
 
     render();
